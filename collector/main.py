@@ -1,5 +1,4 @@
 # orchestration / entry point
-from datetime import datetime
 import logging
 import os
 import psycopg2
@@ -12,6 +11,13 @@ logger = logging.getLogger(__name__)
 
 load_dotenv()
 
+# TODO:
+# - change query to pull approved snacks
+# - call trend collector
+# - read doc for reddit/twitter
+# - write code for reddit/twitter
+# - updated db
+
 
 def connect_db():
     try:
@@ -22,10 +28,11 @@ def connect_db():
             password=os.getenv("DB_PASSWORD"),
             dbname=os.getenv("DB_NAME"),
         )
-        print("Connection to supabase db successful")
+        # print("Connection to supabase db successful")
+        logger.info("Connection to supabase db sucessful")
         return connection
     except psycopg2.Error as e:
-        print(f"Error connecting to supabase db: {e}")
+        logger.error(f"Error connecting to supabase db: {e}", exc_info=True)
         return None
 
 
@@ -42,7 +49,7 @@ def fetch_data(connection, table_name):
 
     try:
         cursor = connection.cursor()
-        cursor.execute(f"SELECT * FROM {table_name}")
+        cursor.execute(f"SELECT name FROM {table_name}")
         rows = cursor.fetchall()
         column_names = [desc[0] for desc in cursor.description]
         cursor.close()
@@ -59,5 +66,6 @@ if __name__ == "__main__":
     if conn:
         print("\n--- Fectching Data ---")
         column_names, rows = fetch_data(conn, "snacks")
-        print(column_names, rows)
+        snack_list = [item[0] for item in rows]
+        print(snack_list)
         close_db_connection(conn)
