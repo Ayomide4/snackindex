@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 # TODO:
-# - change query to pull approved snacks
 # - call trend collector
 # - read doc for reddit/twitter
 # - write code for reddit/twitter
@@ -49,7 +48,7 @@ def fetch_data(connection, table_name):
 
     try:
         cursor = connection.cursor()
-        cursor.execute(f"SELECT name FROM {table_name}")
+        cursor.execute(f"SELECT name FROM {table_name} WHERE status = 'approved'")
         rows = cursor.fetchall()
         column_names = [desc[0] for desc in cursor.description]
         cursor.close()
@@ -64,7 +63,7 @@ if __name__ == "__main__":
     conn = connect_db()
 
     if conn:
-        print("\n--- Fectching Data ---")
+        logger.info("Fectching Data:")
         column_names, rows = fetch_data(conn, "snacks")
         snack_list = [item[0] for item in rows]
         print(snack_list)
