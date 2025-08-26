@@ -1,6 +1,7 @@
 from pytrends.request import TrendReq
 import time
 import random
+import matplotlib.pyplot as plt
 
 test_snack_list = [
     "Takis",
@@ -26,12 +27,25 @@ def get_trends(kw_list):
         if not data.empty:
             print("\n--- Interest Over Time Data ---")
             print(data)  # Print first few rows of the DataFrame
-            # print(data.info())  # Get a summary of the DataFrame
+            # # print(data.info())  # Get a summary of the DataFrame
         else:
             print("No data")
 
     except Exception as e:
         print(f"An error occured while fetching data: {e}")
+
+
+def visualize_with_matplotlib(data):
+    if not data.empty:
+        data.plot(figsize=(10, 6))
+        plt.title("Interest Over Time for Snacks")
+        plt.xlabel("Date")
+        plt.ylabel("Search Interest (Relative Scale)")
+        plt.grid(True)
+        plt.legend(loc="best")
+        plt.show()
+    else:
+        print("No data to visualize.")
 
 
 if __name__ == "__main__":

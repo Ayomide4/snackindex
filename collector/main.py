@@ -13,6 +13,7 @@ load_dotenv()
 
 # TODO:
 # - call trend collector
+#   - get average number
 # - read doc for reddit/twitter
 # - write code for reddit/twitter
 # - updated db
