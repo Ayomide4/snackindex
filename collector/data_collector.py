@@ -8,11 +8,17 @@ from dotenv import load_dotenv
 from newsapi import NewsApiClient
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import datetime
+import finnhub
 
 """
     TODO:
-        - stock api
         - have the logger make an output file for the daily cron to keep track of its daily usage
+
+    info needed for data collection 
+        - list of snacks with parent companies and snack aliases
+        - 
+
+
 """
 
 load_dotenv()
@@ -26,6 +32,7 @@ CLIENT_ID = os.getenv("REDDIT_CLIENT_ID")
 CLIENT_SECRET = os.getenv("REDDIT_CLIENT_SECRET")
 USER_AGENT = "SnackIndexCollector/0.1 by Taffe"
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
+FINNHUB_API_KEY = os.getenv("FINNHUB_API_KEY")
 SUBREDDITS_TO_SEARCH = "snacks+fastfood+food+soda"
 SEARCH_LIMIT = 20
 
@@ -34,16 +41,19 @@ SNACK_CONFIG = {
         "search_terms": ["Coca-Cola", "Coca Cola", "Coke"],
         "reddit_query": '"Coca-Cola" OR "Coca Cola" OR "Coke"',
         "news_query": '("Coca-Cola" OR "Coke") AND (drink OR beverage OR soda) NOT NASCAR NOT stock',
+        "stock_ticker": "KO",
     },
     "sprite": {
         "search_terms": ["Sprite"],
         "reddit_query": '"Sprite"',
         "news_query": '"Sprite" AND (soda OR drink OR beverage) NOT game',
+        "stock_ticker": "KO",
     },
     "cheetos": {
         "search_terms": ["Cheetos"],
         "reddit_query": '"Cheetos"',
         "news_query": '"Cheetos" AND (snack OR chips)',
+        "stock_ticker": "PEP",
     },
 }
 
@@ -54,6 +64,7 @@ reddit = praw.Reddit(
 )
 analyzer = SentimentIntensityAnalyzer()
 newsapi = NewsApiClient(api_key=NEWS_API_KEY)
+finnhub_client = finnhub.Client(api_key=FINNHUB_API_KEY)
 
 # time filter
 current_time_unix = int(time.time())
@@ -167,6 +178,13 @@ def get_avg_sentiment(mentions):
     return avg
 
 
+def get_stock_price(stock_ticker):
+    logging.info("--- Starting Stock Price Lookup ---")
+    stock_price = finnhub_client.quote(stock_ticker)["c"]
+    logging.debug(f"current stock price: {stock_price}")
+    return stock_price
+
+
 def main():
     logging.info("Starting the Snack Index data collector.")
 
@@ -196,7 +214,8 @@ def main():
         logging.debug(f"\n--- News Articles for {snack_name} ---")
         logging.debug(json.dumps(news_data, indent=2))
 
-        # TODO: stock price
+        # get stock price
+        get_stock_price(config["stock_ticker"])
 
         # TODO: save to db
 

@@ -13,10 +13,8 @@ load_dotenv()
 
 # TODO:
 # - call trend collector
-#   - get average number
-# - read doc for reddit/twitter
-# - write code for reddit/twitter
 # - updated db
+# - write code to bootstrap db (3 month pull data)
 
 
 def connect_db():
