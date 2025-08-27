@@ -1,4 +1,6 @@
 import logging
+from pytrends.request import TrendReq
+import pandas as pd
 import json
 import praw
 import praw.models
@@ -10,20 +12,17 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import datetime
 import finnhub
 
+
 """
-    TODO:
+    TODO :
         - have the logger make an output file for the daily cron to keep track of its daily usage
-
-    info needed for data collection 
-        - list of snacks with parent companies and snack aliases
-        - 
-
-
 """
 
 load_dotenv()
 logging.basicConfig(
-    level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s"
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    # level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 logging.getLogger("praw").setLevel(logging.INFO)
@@ -35,30 +34,12 @@ NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 FINNHUB_API_KEY = os.getenv("FINNHUB_API_KEY")
 SUBREDDITS_TO_SEARCH = "snacks+fastfood+food+soda"
 SEARCH_LIMIT = 20
-SNACK_CONFIG = {
-    "coca-cola": {
-        "search_terms": ["Coca-Cola", "Coca Cola", "Coke"],
-        "reddit_query": '"Coca-Cola" OR "Coca Cola" OR "Coke"',
-        "news_query": '("Coca-Cola" OR "Coke") AND (drink OR beverage OR soda) NOT NASCAR NOT stock',
-        "stock_ticker": "KO",
-    },
-    "sprite": {
-        "search_terms": ["Sprite"],
-        "reddit_query": '"Sprite"',
-        "news_query": '"Sprite" AND (soda OR drink OR beverage) NOT game',
-        "stock_ticker": "KO",
-    },
-    "cheetos": {
-        "search_terms": ["Cheetos"],
-        "reddit_query": '"Cheetos"',
-        "news_query": '"Cheetos" AND (snack OR chips)',
-        "stock_ticker": "PEP",
-    },
-}
 
 processed_stocks = set()
 cached_prices = {}
 
+
+pytrends = TrendReq(hl="en-US", tz=360)
 reddit = praw.Reddit(
     client_id=CLIENT_ID,
     client_secret=CLIENT_SECRET,
@@ -74,6 +55,28 @@ twenty_four_hours_ago_unix = current_time_unix - (24 * 60 * 60)
 yesterday_iso = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime(
     "%Y-%m-%d"
 )
+
+
+def get_google_trends_data(search_terms):
+    try:
+        # Pytrends can only handle up to 5 keywords at a time
+        pytrends.build_payload(kw_list=search_terms[:5], cat=71, timeframe="now 1-d")
+        data = pytrends.interest_over_time()
+
+        # avoid hitting rate limits
+        time.sleep(1)
+
+        if not data.empty and "isPartial" in data.columns:
+            data = data.drop(columns=["isPartial"])
+
+            # Get most recent data and calculate the mean
+            last_row_mean = data.iloc[-1].mean()
+            return int(last_row_mean) if not pd.isna(last_row_mean) else 0
+
+    except Exception as e:
+        logging.error(f"An error occurred while fetching Google Trends data: {e}")
+
+    return 0
 
 
 def get_reddit_data(
@@ -183,10 +186,8 @@ def get_avg_sentiment(mentions):
 def get_stock_price(stock_ticker):
     logging.info(f"Starting Stock Price Lookup for {stock_ticker}")
 
+    # stops multi fetching of same data
     if stock_ticker in processed_stocks:
-        logging.info(
-            f"Returning cached price for {stock_ticker}: ${cached_prices[stock_ticker]}"
-        )
         return cached_prices.get(stock_ticker)
 
     try:
@@ -194,10 +195,6 @@ def get_stock_price(stock_ticker):
         closing_price = stock_price_data.get("c")
 
         if closing_price is not None and closing_price != 0:
-            logging.info(
-                f"Successfully fetched stock price for {stock_ticker}: ${closing_price}"
-            )
-
             processed_stocks.add(stock_ticker)
             cached_prices[stock_ticker] = closing_price
 
@@ -213,11 +210,13 @@ def get_stock_price(stock_ticker):
         return None
 
 
-def main():
+def run_collection_pipeline(snack_config):
     logging.info("Starting the Snack Index data collector.")
 
-    for snack_name, config in SNACK_CONFIG.items():
+    for snack_name, config in snack_config.items():
         logging.info(f"Processing: {snack_name}")
+
+        google_trends_score = get_google_trends_data(config["search_terms"])
 
         reddit_data = get_reddit_data(
             search_query=config["reddit_query"],
@@ -243,12 +242,16 @@ def main():
         logging.debug(json.dumps(news_data, indent=2))
 
         # get stock price
-        get_stock_price(config["stock_ticker"])
+        closing_price = get_stock_price(config["stock_ticker"])
 
         # TODO: save to db
 
         # log summary
-        logging.info(f"Finished processing for {snack_name}.")
+        logging.info(f"Finished processing for {snack_name}. Log summary:")
+        logging.info(
+            f"Successfully fetched stock price for {config['stock_ticker']}: ${closing_price}"
+        )
+        logging.info(f"Google Trends Score: {google_trends_score}")
         logging.info(
             f"Reddit Mentions: {reddit_mention_count}, Avg Sentiment: {avg_reddit_sentiment:.4f}"
         )
@@ -256,7 +259,3 @@ def main():
             f"News Articles: {news_article_count}, Avg Sentiment: {avg_news_sentiment:.4f}"
         )
         print("-" * 40)
-
-
-if __name__ == "__main__":
-    main()
