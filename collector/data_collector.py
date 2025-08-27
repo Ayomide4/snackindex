@@ -23,7 +23,7 @@ import finnhub
 
 load_dotenv()
 logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+    level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 logging.getLogger("praw").setLevel(logging.INFO)
@@ -35,7 +35,6 @@ NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 FINNHUB_API_KEY = os.getenv("FINNHUB_API_KEY")
 SUBREDDITS_TO_SEARCH = "snacks+fastfood+food+soda"
 SEARCH_LIMIT = 20
-
 SNACK_CONFIG = {
     "coca-cola": {
         "search_terms": ["Coca-Cola", "Coca Cola", "Coke"],
@@ -56,6 +55,9 @@ SNACK_CONFIG = {
         "stock_ticker": "PEP",
     },
 }
+
+processed_stocks = set()
+cached_prices = {}
 
 reddit = praw.Reddit(
     client_id=CLIENT_ID,
@@ -79,7 +81,7 @@ def get_reddit_data(
 ):
     # Fetches and analyzes mentions from Reddit within a given time window.
     reddit_mentions = []
-    logging.info(f"--- Searching Reddit for query: '{search_query}' ---")
+    logging.info(f"Searching Reddit for query: '{search_query}'")
 
     try:
         search_results = reddit.subreddit(subreddits_to_search).search(
@@ -129,7 +131,7 @@ def get_news_data(search_query, time_filter_iso):
     processed_titles = set()  # prevent duplicate news articles
     news_articles = []
 
-    logging.info(f"--- Searching NewsAPI for query: '{search_query}' ---")
+    logging.info(f"Searching NewsAPI for query: '{search_query}'")
 
     # news collection
     try:
@@ -179,17 +181,43 @@ def get_avg_sentiment(mentions):
 
 
 def get_stock_price(stock_ticker):
-    logging.info("--- Starting Stock Price Lookup ---")
-    stock_price = finnhub_client.quote(stock_ticker)["c"]
-    logging.debug(f"current stock price: {stock_price}")
-    return stock_price
+    logging.info(f"Starting Stock Price Lookup for {stock_ticker}")
+
+    if stock_ticker in processed_stocks:
+        logging.info(
+            f"Returning cached price for {stock_ticker}: ${cached_prices[stock_ticker]}"
+        )
+        return cached_prices.get(stock_ticker)
+
+    try:
+        stock_price_data = finnhub_client.quote(stock_ticker)
+        closing_price = stock_price_data.get("c")
+
+        if closing_price is not None and closing_price != 0:
+            logging.info(
+                f"Successfully fetched stock price for {stock_ticker}: ${closing_price}"
+            )
+
+            processed_stocks.add(stock_ticker)
+            cached_prices[stock_ticker] = closing_price
+
+            return closing_price
+        else:
+            logging.warning(f"No valid closing price data found for {stock_ticker}.")
+            return None
+
+    except Exception as e:
+        logging.error(
+            f"An error occurred while fetching stock data for {stock_ticker}: {e}"
+        )
+        return None
 
 
 def main():
     logging.info("Starting the Snack Index data collector.")
 
     for snack_name, config in SNACK_CONFIG.items():
-        logging.info(f"-- Processing: {snack_name}")
+        logging.info(f"Processing: {snack_name}")
 
         reddit_data = get_reddit_data(
             search_query=config["reddit_query"],
@@ -208,10 +236,10 @@ def main():
         news_article_count = len(news_data)
 
         # display raw data
-        logging.debug(f"\n--- Reddit Mentions for {snack_name} ---")
+        logging.debug(f"\n Reddit Mentions for {snack_name}")
         logging.debug(json.dumps(reddit_data, indent=2))
 
-        logging.debug(f"\n--- News Articles for {snack_name} ---")
+        logging.debug(f"\n News Articles for {snack_name}")
         logging.debug(json.dumps(news_data, indent=2))
 
         # get stock price
