@@ -1,7 +1,7 @@
 import logging
+import psycopg2
 from pytrends.request import TrendReq
 import pandas as pd
-import json
 import praw
 import praw.models
 import os
@@ -11,6 +11,7 @@ from newsapi import NewsApiClient
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import datetime
 import finnhub
+from db_utils import save_metrics_to_db
 
 
 """
@@ -210,12 +211,21 @@ def get_stock_price(stock_ticker):
         return None
 
 
-def run_collection_pipeline(snack_config):
-    logging.info("Starting the Snack Index data collector.")
+# runs data collection pipeline for each snack in config then updates db
+def run_collection_pipeline(snack_config, db_connection):
+    logging.info("Starting the Snack Index data collection pipeline.")
+
+    stock_price_cache = {}
+
+    twenty_four_hours_ago_unix = int(time.time()) - (24 * 60 * 60)
+    yesterday_iso = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime(
+        "%Y-%m-%d"
+    )
 
     for snack_name, config in snack_config.items():
         logging.info(f"Processing: {snack_name}")
 
+        # start fetch data
         google_trends_score = get_google_trends_data(config["search_terms"])
 
         reddit_data = get_reddit_data(
@@ -234,23 +244,34 @@ def run_collection_pipeline(snack_config):
         avg_news_sentiment = get_avg_sentiment(news_data)
         news_article_count = len(news_data)
 
-        # display raw data
-        logging.debug(f"\n Reddit Mentions for {snack_name}")
-        logging.debug(json.dumps(reddit_data, indent=2))
+        stock_ticker = config.get("stock_ticker")
+        stock_price = None
+        if stock_ticker:
+            if stock_ticker in stock_price_cache:
+                stock_price = stock_price_cache[stock_ticker]
+                logging.info(
+                    f"Using cached stock price for {stock_ticker}: ${stock_price}"
+                )
+            else:
+                stock_price = get_stock_price(stock_ticker)
+                stock_price_cache[stock_ticker] = stock_price
 
-        logging.debug(f"\n News Articles for {snack_name}")
-        logging.debug(json.dumps(news_data, indent=2))
+        # create metrics obj
+        daily_metrics = {
+            "snack_id": config["snack_id"],
+            "date": yesterday_iso,
+            "google_trends_score": google_trends_score,
+            "reddit_mention_count": reddit_mention_count,
+            "avg_reddit_sentiment": avg_reddit_sentiment,
+            "news_article_count": news_article_count,
+            "avg_news_sentiment": avg_news_sentiment,
+            "stock_close_price": stock_price,
+        }
 
-        # get stock price
-        closing_price = get_stock_price(config["stock_ticker"])
+        save_metrics_to_db(db_connection, daily_metrics)
 
-        # TODO: save to db
-
-        # log summary
+        # Logs
         logging.info(f"Finished processing for {snack_name}. Log summary:")
-        logging.info(
-            f"Successfully fetched stock price for {config['stock_ticker']}: ${closing_price}"
-        )
         logging.info(f"Google Trends Score: {google_trends_score}")
         logging.info(
             f"Reddit Mentions: {reddit_mention_count}, Avg Sentiment: {avg_reddit_sentiment:.4f}"
@@ -258,4 +279,7 @@ def run_collection_pipeline(snack_config):
         logging.info(
             f"News Articles: {news_article_count}, Avg Sentiment: {avg_news_sentiment:.4f}"
         )
+        if stock_price is not None:
+            logging.info(f"Stock Price for {stock_ticker}: ${stock_price}")
+
         print("-" * 40)
