@@ -35,6 +35,14 @@ jobs:
             echo "Value: '${{ secrets.DB_HOST }}'"
           fi
 
+      - name: Debug DNS Resolution
+        run: |
+          echo "Checking DNS for the host: ${{ secrets.DB_HOST }}"
+          echo "--- Querying for A Record (IPv4 address) ---"
+          dig A ${{ secrets.DB_HOST }} +short
+          echo "--- Querying for AAAA Record (IPv6 address) ---"
+          dig AAAA ${{ secrets.DB_HOST }} +short
+
       - name: Run data collector script
         run: python main.py
         env:
