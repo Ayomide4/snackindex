@@ -17,11 +17,11 @@ LEFT JOIN snack_aliases a ON s.id = a.snack_id;"""
 def connect_db():
     try:
         connection = psycopg2.connect(
-            host="aws-0-us-east-2.pooler.supabase.com",
-            port="6543",
-            user="postgres.eeqtlwcodbhcwatozewk",
-            password="k0XpyjZYZOEUJgbw",
-            dbname="postgres",
+            host=os.environ.get("DB_HOST"),
+            port=os.getenv("DB_PORT"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            dbname=os.getenv("DB_NAME"),
         )
         logger.info("Connection to supabase db sucessful")
         return connection
