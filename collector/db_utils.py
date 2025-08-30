@@ -1,6 +1,7 @@
 import logging
 import os
 import psycopg2
+import socket
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -16,8 +17,17 @@ LEFT JOIN snack_aliases a ON s.id = a.snack_id;"""
 
 def connect_db():
     try:
+        db_host = os.environ.get("DB_HOST")
+
+        # force ipv4
+        # Get address info for the host, filtering for IPv4
+        addr_info = socket.getaddrinfo(db_host, None, socket.AF_INET)
+        # Extract the IPv4 address from the returned info
+        ipv4_address = addr_info[0][4][0]
+        logging.info(f"Resolved {db_host} to IPv4 address: {ipv4_address}")
+
         connection = psycopg2.connect(
-            host=os.getenv("DB_HOST"),
+            host=ipv4_address,
             port=os.getenv("DB_PORT"),
             user=os.getenv("DB_USER"),
             password=os.getenv("DB_PASSWORD"),
@@ -51,7 +61,7 @@ def fetch_data(connection):
 
     except psycopg2.Error as e:
         logging.error(f"Error fetching data: {e}")
-        return [], []
+        return []
 
 
 def create_snack_config(db_results):
