@@ -43,6 +43,14 @@ jobs:
           echo "--- Querying for AAAA Record (IPv6 address) ---"
           dig AAAA ${{ secrets.DB_HOST }} +short
 
+      - name: Verify All Connection Pooler Secrets
+        run: |
+          echo "Host: ${{ secrets.DB_HOST }}"
+          echo "Port: ${{ secrets.DB_PORT }}"
+          echo "User: ${{ secrets.DB_USER }}"
+          echo "Database Name: ${{ secrets.DB_NAME }}"
+
+
       - name: Run data collector script
         run: python main.py
         env:
