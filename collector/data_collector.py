@@ -1,18 +1,19 @@
+import datetime
 import logging
-import psycopg2
-from pytrends.request import TrendReq
+import os
+import random
+import time
+
+import finnhub
 import pandas as pd
 import praw
 import praw.models
-import os
-import time
+from db_utils import save_metrics_to_db
 from dotenv import load_dotenv
 from newsapi import NewsApiClient
+from pytrends.request import TrendReq
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-import datetime
-import finnhub
-from db_utils import save_metrics_to_db
-
+from pytrends.exceptions import ResponseError
 
 """
     TODO :
@@ -59,24 +60,51 @@ yesterday_iso = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime(
 
 
 def get_google_trends_data(search_terms):
-    try:
-        # Pytrends can only handle up to 5 keywords at a time
-        pytrends.build_payload(kw_list=search_terms[:5], cat=71, timeframe="now 1-d")
-        data = pytrends.interest_over_time()
+    if not search_terms:
+        logging.warning("Received an empty list for Google Trends search. Skipping.")
+        return 0
 
-        # avoid hitting rate limits
-        time.sleep(1)
+    max_retries = 3
+    retry_delay = 5
 
-        if not data.empty and "isPartial" in data.columns:
-            data = data.drop(columns=["isPartial"])
+    # retry api request
+    for attempt in range(max_retries):
+        try:
+            logging.debug(
+                f"Requesting Google Trends data for: {search_terms[:5]} (Attempt {attempt + 1})"
+            )
 
-            # Get most recent data and calculate the mean
-            last_row_mean = data.iloc[-1].mean()
-            return int(last_row_mean) if not pd.isna(last_row_mean) else 0
+            pytrends.build_payload(
+                kw_list=search_terms[:5], cat=71, timeframe="now 1-d"
+            )
+            data = pytrends.interest_over_time()
 
-    except Exception as e:
-        logging.error(f"An error occurred while fetching Google Trends data: {e}")
+            if not data.empty and "isPartial" in data.columns:
+                data = data.drop(columns=["isPartial"])
+                last_row_mean = data.iloc[-1].mean()
+                return int(last_row_mean) if not pd.isna(last_row_mean) else 0
 
+            return 0
+
+        except ResponseError as e:
+            if "response with code 429" in str(e):
+                logging.warning(
+                    f"Rate limit hit. Waiting for {retry_delay} seconds before retrying."
+                )
+                time.sleep(retry_delay)
+                retry_delay *= 2  # Double the delay for the next attempt
+            else:
+                logging.error(f"An API error occurred for terms '{search_terms}': {e}")
+                return 0
+        except Exception as e:
+            logging.error(
+                f"An unexpected error occurred for terms '{search_terms}': {e}"
+            )
+            return 0
+
+    logging.error(
+        f"Failed to fetch Google Trends data for '{search_terms}' after {max_retries} attempts."
+    )
     return 0
 
 

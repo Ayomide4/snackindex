@@ -1,0 +1,226 @@
+2025-08-29 11:49:16,479 - INFO - Connection to supabase db sucessful
+2025-08-29 11:49:16,480 - INFO - Fectching Data:
+2025-08-29 11:49:16,597 - INFO - Starting the Snack Index data collection pipeline.
+2025-08-29 11:49:16,597 - INFO - Processing: coca-cola
+2025-08-29 11:49:17,240 - WARNING - Rate limit hit. Waiting for 5 seconds before retrying.
+2025-08-29 11:49:22,917 - WARNING - Rate limit hit. Waiting for 10 seconds before retrying.
+2025-08-29 11:49:33,818 - WARNING - Rate limit hit. Waiting for 20 seconds before retrying.
+2025-08-29 11:49:53,823 - ERROR - Failed to fetch Google Trends data for '['Coca cola', 'Coke']' after 3 attempts.
+2025-08-29 11:49:53,824 - INFO - Searching Reddit for query: '"Coca cola" OR "Coke"'
+2025-08-29 11:49:55,372 - INFO - Searching NewsAPI for query: '("Coca cola" OR "Coke") NOT stock NOT shares NOT earnings NOT nasdaq NOT nyse'
+2025-08-29 11:49:55,863 - INFO - Starting Stock Price Lookup for KO
+2025-08-29 11:49:56,528 - INFO - Successfully saved metrics for snack_id: 9
+2025-08-29 11:49:56,528 - INFO - Finished processing for coca-cola. Log summary:
+2025-08-29 11:49:56,529 - INFO - Google Trends Score: 0
+2025-08-29 11:49:56,529 - INFO - Reddit Mentions: 3, Avg Sentiment: 0.0000
+2025-08-29 11:49:56,529 - INFO - News Articles: 26, Avg Sentiment: 0.1809
+2025-08-29 11:49:56,529 - INFO - Stock Price for KO: $68.805
+2025-08-29 11:49:56,530 - INFO - Database connection closed.
+2025-08-29 17:39:15,101 - INFO - Connection to supabase db sucessful
+2025-08-29 17:39:15,102 - INFO - Fectching Data:
+2025-08-29 17:39:15,382 - INFO - Starting the Snack Index data collection pipeline.
+2025-08-29 17:39:15,383 - INFO - Processing: coca-cola
+2025-08-29 17:39:16,065 - INFO - Searching Reddit for query: '"Coca cola" OR "Coke"'
+2025-08-29 17:39:17,494 - INFO - Searching NewsAPI for query: '("Coca cola" OR "Coke") NOT stock NOT shares NOT earnings NOT nasdaq NOT nyse'
+2025-08-29 17:39:17,888 - INFO - Starting Stock Price Lookup for KO
+2025-08-29 17:39:18,195 - INFO - Successfully saved metrics for snack_id: 9
+2025-08-29 17:39:18,196 - INFO - Finished processing for coca-cola. Log summary:
+2025-08-29 17:39:18,196 - INFO - Google Trends Score: 76
+2025-08-29 17:39:18,196 - INFO - Reddit Mentions: 3, Avg Sentiment: 0.0000
+2025-08-29 17:39:18,196 - INFO - News Articles: 32, Avg Sentiment: 0.1662
+2025-08-29 17:39:18,196 - INFO - Stock Price for KO: $68.99
+2025-08-29 17:39:18,197 - INFO - Database connection closed.
+2025-08-29 19:13:20,771 - INFO - Connection to supabase db sucessful
+2025-08-29 19:13:20,772 - INFO - Fectching Data:
+2025-08-29 19:13:20,849 - INFO - Starting the Snack Index data collection pipeline.
+2025-08-29 19:13:20,850 - INFO - Processing: coca-cola
+2025-08-29 19:13:21,275 - INFO - Searching Reddit for query: '"Coca cola" OR "Coke"'
+2025-08-29 19:13:22,203 - INFO - Searching NewsAPI for query: '("Coca cola" OR "Coke") NOT stock NOT shares NOT earnings NOT nasdaq NOT nyse'
+2025-08-29 19:13:22,476 - INFO - Starting Stock Price Lookup for KO
+2025-08-29 19:13:22,737 - INFO - Successfully saved metrics for snack_id: 9
+2025-08-29 19:13:22,737 - INFO - Finished processing for coca-cola. Log summary:
+2025-08-29 19:13:22,737 - INFO - Google Trends Score: 88
+2025-08-29 19:13:22,737 - INFO - Reddit Mentions: 3, Avg Sentiment: 0.0000
+2025-08-29 19:13:22,737 - INFO - News Articles: 32, Avg Sentiment: 0.1662
+2025-08-29 19:13:22,737 - INFO - Stock Price for KO: $68.99
+2025-08-29 19:13:22,738 - INFO - Processing: hot-cheetos
+2025-08-29 19:13:23,367 - INFO - Searching Reddit for query: '"Hot Cheetos" OR "Flamin Hot Cheetos"'
+2025-08-29 19:13:23,795 - INFO - Searching NewsAPI for query: '("Hot Cheetos" OR "Flamin Hot Cheetos") NOT stock NOT shares NOT earnings NOT nasdaq NOT nyse'
+2025-08-29 19:13:23,960 - INFO - Starting Stock Price Lookup for PEP
+2025-08-29 19:13:24,211 - INFO - Successfully saved metrics for snack_id: 4
+2025-08-29 19:13:24,212 - INFO - Finished processing for hot-cheetos. Log summary:
+2025-08-29 19:13:24,212 - INFO - Google Trends Score: 0
+2025-08-29 19:13:24,212 - INFO - Reddit Mentions: 0, Avg Sentiment: 0.0000
+2025-08-29 19:13:24,212 - INFO - News Articles: 0, Avg Sentiment: 0.0000
+2025-08-29 19:13:24,212 - INFO - Stock Price for PEP: $148.65
+2025-08-29 19:13:24,212 - INFO - Processing: goldfish-crackers
+2025-08-29 19:13:24,722 - INFO - Searching Reddit for query: '"Goldfish Crackers"'
+2025-08-29 19:13:25,027 - INFO - Searching NewsAPI for query: '("Goldfish Crackers") NOT stock NOT shares NOT earnings NOT nasdaq NOT nyse'
+2025-08-29 19:13:25,320 - INFO - Starting Stock Price Lookup for CPB
+2025-08-29 19:13:25,629 - INFO - Successfully saved metrics for snack_id: 20
+2025-08-29 19:13:25,629 - INFO - Finished processing for goldfish-crackers. Log summary:
+2025-08-29 19:13:25,630 - INFO - Google Trends Score: 0
+2025-08-29 19:13:25,630 - INFO - Reddit Mentions: 0, Avg Sentiment: 0.0000
+2025-08-29 19:13:25,630 - INFO - News Articles: 0, Avg Sentiment: 0.0000
+2025-08-29 19:13:25,630 - INFO - Stock Price for CPB: $31.93
+2025-08-29 19:13:25,631 - INFO - Processing: gatorade
+2025-08-29 19:13:26,376 - INFO - Searching Reddit for query: '"Gatorade"'
+2025-08-29 19:13:26,978 - INFO - Searching NewsAPI for query: '("Gatorade") NOT stock NOT shares NOT earnings NOT nasdaq NOT nyse'
+2025-08-29 19:13:27,473 - INFO - Using cached stock price for PEP: $148.65
+2025-08-29 19:13:27,778 - INFO - Successfully saved metrics for snack_id: 11
+2025-08-29 19:13:27,779 - INFO - Finished processing for gatorade. Log summary:
+2025-08-29 19:13:27,779 - INFO - Google Trends Score: 77
+2025-08-29 19:13:27,779 - INFO - Reddit Mentions: 0, Avg Sentiment: 0.0000
+2025-08-29 19:13:27,780 - INFO - News Articles: 11, Avg Sentiment: 0.2084
+2025-08-29 19:13:27,780 - INFO - Stock Price for PEP: $148.65
+2025-08-29 19:13:27,780 - INFO - Processing: reese's-peanut-butter-cups
+2025-08-29 19:13:28,565 - INFO - Searching Reddit for query: '"Reese's Peanut Butter Cups"'
+2025-08-29 19:13:29,104 - INFO - Searching NewsAPI for query: '("Reese's Peanut Butter Cups") NOT stock NOT shares NOT earnings NOT nasdaq NOT nyse'
+2025-08-29 19:13:29,382 - INFO - Starting Stock Price Lookup for HSY
+2025-08-29 19:13:29,765 - INFO - Successfully saved metrics for snack_id: 17
+2025-08-29 19:13:29,765 - INFO - Finished processing for reese's-peanut-butter-cups. Log summary:
+2025-08-29 19:13:29,765 - INFO - Google Trends Score: 0
+2025-08-29 19:13:29,765 - INFO - Reddit Mentions: 0, Avg Sentiment: 0.0000
+2025-08-29 19:13:29,765 - INFO - News Articles: 0, Avg Sentiment: 0.0000
+2025-08-29 19:13:29,766 - INFO - Stock Price for HSY: $183.75
+2025-08-29 19:13:29,766 - INFO - Processing: lay's
+2025-08-29 19:13:30,638 - INFO - Searching Reddit for query: '"Lay's"'
+2025-08-29 19:13:31,135 - INFO - Searching NewsAPI for query: '("Lay's") NOT stock NOT shares NOT earnings NOT nasdaq NOT nyse'
+2025-08-29 19:13:31,416 - INFO - Using cached stock price for PEP: $148.65
+2025-08-29 19:13:31,605 - INFO - Successfully saved metrics for snack_id: 12
+2025-08-29 19:13:31,605 - INFO - Finished processing for lay's. Log summary:
+2025-08-29 19:13:31,605 - INFO - Google Trends Score: 0
+2025-08-29 19:13:31,605 - INFO - Reddit Mentions: 0, Avg Sentiment: 0.0000
+2025-08-29 19:13:31,606 - INFO - News Articles: 1, Avg Sentiment: -0.6124
+2025-08-29 19:13:31,606 - INFO - Stock Price for PEP: $148.65
+2025-08-29 19:13:31,606 - INFO - Processing: doritos
+2025-08-29 19:13:32,484 - INFO - Searching Reddit for query: '"Doritos"'
+2025-08-29 19:13:32,948 - INFO - Searching NewsAPI for query: '("Doritos") NOT stock NOT shares NOT earnings NOT nasdaq NOT nyse'
+2025-08-29 19:13:33,600 - INFO - Using cached stock price for PEP: $148.65
+2025-08-29 19:13:34,034 - INFO - Successfully saved metrics for snack_id: 10
+2025-08-29 19:13:34,034 - INFO - Finished processing for doritos. Log summary:
+2025-08-29 19:13:34,034 - INFO - Google Trends Score: 84
+2025-08-29 19:13:34,034 - INFO - Reddit Mentions: 0, Avg Sentiment: 0.0000
+2025-08-29 19:13:34,034 - INFO - News Articles: 4, Avg Sentiment: 0.3804
+2025-08-29 19:13:34,035 - INFO - Stock Price for PEP: $148.65
+2025-08-29 19:13:34,035 - INFO - Processing: hershey's-bar
+2025-08-29 19:13:34,817 - INFO - Searching Reddit for query: '"Hershey's Bar"'
+2025-08-29 19:13:35,136 - INFO - Searching NewsAPI for query: '("Hershey's Bar") NOT stock NOT shares NOT earnings NOT nasdaq NOT nyse'
+2025-08-29 19:13:35,413 - INFO - Using cached stock price for HSY: $183.75
+2025-08-29 19:13:35,515 - INFO - Successfully saved metrics for snack_id: 18
+2025-08-29 19:13:35,515 - INFO - Finished processing for hershey's-bar. Log summary:
+2025-08-29 19:13:35,516 - INFO - Google Trends Score: 0
+2025-08-29 19:13:35,516 - INFO - Reddit Mentions: 0, Avg Sentiment: 0.0000
+2025-08-29 19:13:35,516 - INFO - News Articles: 0, Avg Sentiment: 0.0000
+2025-08-29 19:13:35,516 - INFO - Stock Price for HSY: $183.75
+2025-08-29 19:13:35,516 - INFO - Processing: cheez-it
+2025-08-29 19:13:35,861 - INFO - Searching Reddit for query: '"Cheez-it"'
+2025-08-29 19:13:36,270 - INFO - Searching NewsAPI for query: '("Cheez-it") NOT stock NOT shares NOT earnings NOT nasdaq NOT nyse'
+2025-08-29 19:13:36,565 - INFO - Starting Stock Price Lookup for K
+2025-08-29 19:13:36,710 - INFO - Successfully saved metrics for snack_id: 2
+2025-08-29 19:13:36,711 - INFO - Finished processing for cheez-it. Log summary:
+2025-08-29 19:13:36,711 - INFO - Google Trends Score: 0
+2025-08-29 19:13:36,711 - INFO - Reddit Mentions: 0, Avg Sentiment: 0.0000
+2025-08-29 19:13:36,711 - INFO - News Articles: 1, Avg Sentiment: 0.7783
+2025-08-29 19:13:36,711 - INFO - Stock Price for K: $79.5
+2025-08-29 19:13:36,711 - INFO - Processing: ruffles
+2025-08-29 19:13:37,092 - INFO - Searching Reddit for query: '"Ruffles"'
+2025-08-29 19:13:37,698 - INFO - Searching NewsAPI for query: '("Ruffles") NOT stock NOT shares NOT earnings NOT nasdaq NOT nyse'
+2025-08-29 19:13:38,101 - INFO - Using cached stock price for PEP: $148.65
+2025-08-29 19:13:38,212 - INFO - Successfully saved metrics for snack_id: 15
+2025-08-29 19:13:38,212 - INFO - Finished processing for ruffles. Log summary:
+2025-08-29 19:13:38,212 - INFO - Google Trends Score: 0
+2025-08-29 19:13:38,212 - INFO - Reddit Mentions: 0, Avg Sentiment: 0.0000
+2025-08-29 19:13:38,212 - INFO - News Articles: 3, Avg Sentiment: -0.4240
+2025-08-29 19:13:38,213 - INFO - Stock Price for PEP: $148.65
+2025-08-29 19:13:38,213 - INFO - Processing: mountain-dew
+2025-08-29 19:13:38,578 - INFO - Searching Reddit for query: '"Mountain Dew"'
+2025-08-29 19:13:39,145 - INFO - Searching NewsAPI for query: '("Mountain Dew") NOT stock NOT shares NOT earnings NOT nasdaq NOT nyse'
+2025-08-29 19:13:39,285 - INFO - Using cached stock price for PEP: $148.65
+2025-08-29 19:13:39,393 - INFO - Successfully saved metrics for snack_id: 13
+2025-08-29 19:13:39,393 - INFO - Finished processing for mountain-dew. Log summary:
+2025-08-29 19:13:39,394 - INFO - Google Trends Score: 63
+2025-08-29 19:13:39,394 - INFO - Reddit Mentions: 1, Avg Sentiment: 0.6900
+2025-08-29 19:13:39,394 - INFO - News Articles: 2, Avg Sentiment: 0.0788
+2025-08-29 19:13:39,394 - INFO - Stock Price for PEP: $148.65
+2025-08-29 19:13:39,394 - INFO - Processing: ritz-crackers
+2025-08-29 19:13:39,804 - INFO - Searching Reddit for query: '"Ritz Crackers"'
+2025-08-29 19:13:40,346 - INFO - Searching NewsAPI for query: '("Ritz Crackers") NOT stock NOT shares NOT earnings NOT nasdaq NOT nyse'
+2025-08-29 19:13:40,556 - INFO - Starting Stock Price Lookup for MDLZ
+2025-08-29 19:13:40,789 - INFO - Successfully saved metrics for snack_id: 21
+2025-08-29 19:13:40,789 - INFO - Finished processing for ritz-crackers. Log summary:
+2025-08-29 19:13:40,789 - INFO - Google Trends Score: 0
+2025-08-29 19:13:40,789 - INFO - Reddit Mentions: 0, Avg Sentiment: 0.0000
+2025-08-29 19:13:40,790 - INFO - News Articles: 1, Avg Sentiment: 0.8899
+2025-08-29 19:13:40,790 - INFO - Stock Price for MDLZ: $61.44
+2025-08-29 19:13:40,790 - INFO - Processing: oreo-cookies
+2025-08-29 19:13:41,435 - INFO - Searching Reddit for query: '"Oreo Cookies"'
+2025-08-29 19:13:41,999 - INFO - Searching NewsAPI for query: '("Oreo Cookies") NOT stock NOT shares NOT earnings NOT nasdaq NOT nyse'
+2025-08-29 19:13:42,121 - INFO - Using cached stock price for MDLZ: $61.44
+2025-08-29 19:13:42,227 - INFO - Successfully saved metrics for snack_id: 5
+2025-08-29 19:13:42,227 - INFO - Finished processing for oreo-cookies. Log summary:
+2025-08-29 19:13:42,227 - INFO - Google Trends Score: 0
+2025-08-29 19:13:42,228 - INFO - Reddit Mentions: 0, Avg Sentiment: 0.0000
+2025-08-29 19:13:42,228 - INFO - News Articles: 0, Avg Sentiment: 0.0000
+2025-08-29 19:13:42,228 - INFO - Stock Price for MDLZ: $61.44
+2025-08-29 19:13:42,228 - INFO - Processing: monster-energy
+2025-08-29 19:13:42,628 - INFO - Searching Reddit for query: '"Monster Energy"'
+2025-08-29 19:13:43,176 - INFO - Searching NewsAPI for query: '("Monster Energy") NOT stock NOT shares NOT earnings NOT nasdaq NOT nyse'
+2025-08-29 19:13:43,446 - INFO - Starting Stock Price Lookup for MNST
+2025-08-29 19:13:43,596 - INFO - Successfully saved metrics for snack_id: 19
+2025-08-29 19:13:43,597 - INFO - Finished processing for monster-energy. Log summary:
+2025-08-29 19:13:43,597 - INFO - Google Trends Score: 67
+2025-08-29 19:13:43,597 - INFO - Reddit Mentions: 0, Avg Sentiment: 0.0000
+2025-08-29 19:13:43,597 - INFO - News Articles: 0, Avg Sentiment: 0.0000
+2025-08-29 19:13:43,597 - INFO - Stock Price for MNST: $62.41
+2025-08-29 19:13:43,597 - INFO - Processing: pepsi
+2025-08-29 19:13:44,000 - INFO - Searching Reddit for query: '"Pepsi"'
+2025-08-29 19:13:45,555 - INFO - Searching NewsAPI for query: '("Pepsi") NOT stock NOT shares NOT earnings NOT nasdaq NOT nyse'
+2025-08-29 19:13:45,845 - INFO - Using cached stock price for PEP: $148.65
+2025-08-29 19:13:45,952 - INFO - Successfully saved metrics for snack_id: 8
+2025-08-29 19:13:45,953 - INFO - Finished processing for pepsi. Log summary:
+2025-08-29 19:13:45,953 - INFO - Google Trends Score: 62
+2025-08-29 19:13:45,953 - INFO - Reddit Mentions: 9, Avg Sentiment: 0.0695
+2025-08-29 19:13:45,953 - INFO - News Articles: 8, Avg Sentiment: -0.0828
+2025-08-29 19:13:45,953 - INFO - Stock Price for PEP: $148.65
+2025-08-29 19:13:45,954 - INFO - Processing: kit-kat
+2025-08-29 19:13:46,537 - INFO - Searching Reddit for query: '"Kit Kat"'
+2025-08-29 19:13:47,193 - INFO - Searching NewsAPI for query: '("Kit Kat") NOT stock NOT shares NOT earnings NOT nasdaq NOT nyse'
+2025-08-29 19:13:47,542 - INFO - Using cached stock price for HSY: $183.75
+2025-08-29 19:13:47,750 - INFO - Successfully saved metrics for snack_id: 16
+2025-08-29 19:13:47,751 - INFO - Finished processing for kit-kat. Log summary:
+2025-08-29 19:13:47,751 - INFO - Google Trends Score: 0
+2025-08-29 19:13:47,751 - INFO - Reddit Mentions: 0, Avg Sentiment: 0.0000
+2025-08-29 19:13:47,751 - INFO - News Articles: 1, Avg Sentiment: 0.0000
+2025-08-29 19:13:47,751 - INFO - Stock Price for HSY: $183.75
+2025-08-29 19:13:47,752 - INFO - Processing: fanta
+2025-08-29 19:13:48,567 - INFO - Searching Reddit for query: '"Fanta"'
+2025-08-29 19:13:49,738 - INFO - Searching NewsAPI for query: '("Fanta") NOT stock NOT shares NOT earnings NOT nasdaq NOT nyse'
+2025-08-29 19:13:50,471 - INFO - Using cached stock price for KO: $68.99
+2025-08-29 19:13:50,692 - INFO - Successfully saved metrics for snack_id: 1
+2025-08-29 19:13:50,692 - INFO - Finished processing for fanta. Log summary:
+2025-08-29 19:13:50,692 - INFO - Google Trends Score: 95
+2025-08-29 19:13:50,692 - INFO - Reddit Mentions: 0, Avg Sentiment: 0.0000
+2025-08-29 19:13:50,692 - INFO - News Articles: 4, Avg Sentiment: 0.3009
+2025-08-29 19:13:50,692 - INFO - Stock Price for KO: $68.99
+2025-08-29 19:13:50,693 - INFO - Processing: sprite
+2025-08-29 19:13:51,255 - INFO - Searching Reddit for query: '"Sprite"'
+2025-08-29 19:13:51,714 - INFO - Searching NewsAPI for query: '("Sprite") NOT stock NOT shares NOT earnings NOT nasdaq NOT nyse'
+2025-08-29 19:13:52,162 - INFO - Using cached stock price for KO: $68.99
+2025-08-29 19:13:52,269 - INFO - Successfully saved metrics for snack_id: 3
+2025-08-29 19:13:52,270 - INFO - Finished processing for sprite. Log summary:
+2025-08-29 19:13:52,270 - INFO - Google Trends Score: 50
+2025-08-29 19:13:52,270 - INFO - Reddit Mentions: 1, Avg Sentiment: 0.9093
+2025-08-29 19:13:52,270 - INFO - News Articles: 1, Avg Sentiment: 0.0772
+2025-08-29 19:13:52,270 - INFO - Stock Price for KO: $68.99
+2025-08-29 19:13:52,270 - INFO - Processing: tostitos
+2025-08-29 19:13:52,654 - INFO - Searching Reddit for query: '"Tostitos"'
+2025-08-29 19:13:53,263 - INFO - Searching NewsAPI for query: '("Tostitos") NOT stock NOT shares NOT earnings NOT nasdaq NOT nyse'
+2025-08-29 19:13:53,555 - INFO - Using cached stock price for PEP: $148.65
+2025-08-29 19:13:53,661 - INFO - Successfully saved metrics for snack_id: 14
+2025-08-29 19:13:53,661 - INFO - Finished processing for tostitos. Log summary:
+2025-08-29 19:13:53,662 - INFO - Google Trends Score: 0
+2025-08-29 19:13:53,662 - INFO - Reddit Mentions: 0, Avg Sentiment: 0.0000
+2025-08-29 19:13:53,662 - INFO - News Articles: 2, Avg Sentiment: -0.1582
+2025-08-29 19:13:53,662 - INFO - Stock Price for PEP: $148.65
+2025-08-29 19:13:53,663 - INFO - Database connection closed.

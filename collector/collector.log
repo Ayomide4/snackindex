@@ -1,0 +1,12 @@
+2025-08-30 14:24:06,023 - ERROR - Error connecting to supabase db: could not translate host name "db.eeqtlwcodbhcwatozewk.supabase.co" to address: nodename nor servname provided, or not known
+Traceback (most recent call last):
+  File "/Users/ayoomotosho/projects/snackindex/collector/db_utils.py", line 19, in connect_db
+    connection = psycopg2.connect(
+        host=os.getenv("DB_HOST"),
+    ...<3 lines>...
+        dbname=os.getenv("DB_NAME"),
+    )
+  File "/Users/ayoomotosho/projects/snackindex/collector/venv/lib/python3.13/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: could not translate host name "db.eeqtlwcodbhcwatozewk.supabase.co" to address: nodename nor servname provided, or not known
+
