@@ -26,11 +26,14 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       
+
+      - name: Debug Secrets
+        run: echo "DB_HOST starts with: ${{ secrets.DB_HOST && substring(secrets.DB_HOST, 0, 5) || 'is not set}}"
+
       - name: Run data collector script
         # This command runs your main script
         # The environment variables are securely pulled from GitHub Secrets
-        run: python main.py
-        env:
+        run: python main.py env:
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_USER: ${{ secrets.DB_USER }}
