@@ -31,7 +31,10 @@ jobs:
           if [ -z "${{ secrets.DB_HOST }}" ]; then
             echo "DB_HOST secret is empty or not set."
           else
+            # This approach is safer as it doesn't expose the secret in logs
             echo "DB_HOST secret is set and has a non-zero length."
+            # If you must see the value for debugging, use the following line temporarily
+            # Be aware this will print the secret to your action's logs.
             # echo "Value: '${{ secrets.DB_HOST }}'"
           fi
 
