@@ -57,3 +57,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# postgresql://postgres.eeqtlwcodbhcwatozewk:testpasswordforactions2025@aws-0-us-east-2.pooler.supabase.com:6543/postgres

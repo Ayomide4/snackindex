@@ -1,6 +1,7 @@
 import logging
 import os
 import psycopg2
+import base64
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -15,22 +16,24 @@ LEFT JOIN snack_aliases a ON s.id = a.snack_id;"""
 
 
 def connect_db():
-    """Connects to the database using a single connection string."""
+    """Connects to the database using a Base64 encoded connection string."""
     try:
-        # Get the connection string from environment variables
-        connection_string = os.getenv("DB_CONNECTION_STRING")
+        # Get the BASE64 encoded string from the environment variable
+        encoded_string = os.getenv("DB_CONNECTION_STRING")
 
-        # Check if the connection string exists
-        if not connection_string:
+        if not encoded_string:
             logger.error("DB_CONNECTION_STRING environment variable not set.")
             return None
 
-        # Establish the connection
+        # Decode the string from Base64 back to its original form
+        connection_string = base64.b64decode(encoded_string).decode("utf-8")
+
+        # Establish the connection with the decoded string
         connection = psycopg2.connect(connection_string)
 
         logger.info("Connection to Supabase DB successful")
         return connection
-    except psycopg2.Error as e:
+    except Exception as e:
         logger.error(f"Error connecting to Supabase DB: {e}", exc_info=True)
         return None
 
