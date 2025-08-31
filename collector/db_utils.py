@@ -15,18 +15,23 @@ LEFT JOIN snack_aliases a ON s.id = a.snack_id;"""
 
 
 def connect_db():
+    """Connects to the database using a single connection string."""
     try:
-        connection = psycopg2.connect(
-            host=os.environ.get("DB_HOST"),
-            port=os.getenv("DB_PORT"),
-            user=os.getenv("DB_USER"),
-            password=os.getenv("DB_PASSWORD"),
-            dbname=os.getenv("DB_NAME"),
-        )
-        logger.info("Connection to supabase db sucessful")
+        # Get the connection string from environment variables
+        connection_string = os.getenv("DB_CONNECTION_STRING")
+
+        # Check if the connection string exists
+        if not connection_string:
+            logger.error("DB_CONNECTION_STRING environment variable not set.")
+            return None
+
+        # Establish the connection
+        connection = psycopg2.connect(connection_string)
+
+        logger.info("Connection to Supabase DB successful")
         return connection
     except psycopg2.Error as e:
-        logger.error(f"Error connecting to supabase db: {e}", exc_info=True)
+        logger.error(f"Error connecting to Supabase DB: {e}", exc_info=True)
         return None
 
 
