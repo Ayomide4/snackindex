@@ -16,7 +16,11 @@ LEFT JOIN snack_aliases a ON s.id = a.snack_id;"""
 
 
 def connect_db():
-    """Connects to the database using a Base64 encoded connection string."""
+    """Connects to the database using a Base64 encoded connection string.
+
+    We're using base64 to avoid invisible characters since i keep getting password errors
+
+    """
     try:
         # Get the BASE64 encoded string from the environment variable
         encoded_string = os.getenv("DB_CONNECTION_STRING")
@@ -60,6 +64,38 @@ def fetch_data(connection):
     except psycopg2.Error as e:
         logging.error(f"Error fetching data: {e}")
         return []
+
+
+def get_last_known_prices_from_db(conn):
+    """
+    Queries the database to get the most recent valid stock price for each snack.
+    This uses a window function to efficiently find the latest record per snack.
+    Returns a dictionary mapping snack_id to its last known price.
+    """
+    last_prices = {}
+    query = """
+        SELECT snack_id, stock_close_price
+        FROM (
+            SELECT
+                snack_id,
+                stock_close_price,
+                ROW_NUMBER() OVER(PARTITION BY snack_id ORDER BY date DESC) as rn
+            FROM daily_metrics
+            WHERE stock_close_price IS NOT NULL
+        ) AS ranked_metrics
+        WHERE rn = 1;
+    """
+    try:
+        with conn.cursor() as cur:
+            cur.execute(query)
+            results = cur.fetchall()
+            for row in results:
+                snack_id, price = row
+                last_prices[snack_id] = price
+        return last_prices
+    except Exception as e:
+        print(f"CRITICAL: Could not fetch last known prices from DB: {e}")
+        return {}
 
 
 def create_snack_config(db_results):

@@ -8,17 +8,13 @@ import finnhub
 import pandas as pd
 import praw
 import praw.models
-from db_utils import save_metrics_to_db
+from db_utils import save_metrics_to_db, get_last_known_prices_from_db
 from dotenv import load_dotenv
 from newsapi import NewsApiClient
 from pytrends.request import TrendReq
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from pytrends.exceptions import ResponseError
 
-"""
-    TODO :
-        - have the logger make an output file for the daily cron to keep track of its daily usage
-"""
 
 load_dotenv()
 logging.basicConfig(
@@ -243,6 +239,13 @@ def get_stock_price(stock_ticker):
 def run_collection_pipeline(snack_config, db_connection):
     logging.info("Starting the Snack Index data collection pipeline.")
 
+    #  fallback map of prices
+    logging.info("Fetching last known stock prices for fallback...")
+    last_prices_map = get_last_known_prices_from_db(db_connection)
+    logging.info(
+        f"Successfully created fallback map for {len(last_prices_map)} snacks."
+    )
+
     stock_price_cache = {}
 
     twenty_four_hours_ago_unix = int(time.time()) - (24 * 60 * 60)
@@ -282,8 +285,22 @@ def run_collection_pipeline(snack_config, db_connection):
                 )
             else:
                 stock_price = get_stock_price(stock_ticker)
+                # Still cache the result, even if it's None, to avoid re-fetching
                 stock_price_cache[stock_ticker] = stock_price
 
+            if stock_price is None:
+                snack_id = config["snack_id"]
+                fallback_price = last_prices_map.get(snack_id)
+
+                if fallback_price is not None:
+                    stock_price = fallback_price
+                    logging.warning(
+                        f"API returned null for {stock_ticker}. Using last known price from DB: ${stock_price}"
+                    )
+                else:
+                    logging.error(
+                        f"API returned null for {stock_ticker} and NO fallback price was found in DB for snack_id {snack_id}."
+                    )
         # create metrics obj
         daily_metrics = {
             "snack_id": config["snack_id"],
