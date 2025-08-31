@@ -35,26 +35,15 @@ jobs:
             echo "Value: '${{ secrets.DB_HOST }}'"
           fi
 
-      - name: Debug DNS Resolution
-        run: |
-          echo "Checking DNS for the host: ${{ secrets.DB_HOST }}"
-          echo "--- Querying for A Record (IPv4 address) ---"
-          dig A ${{ secrets.DB_HOST }} +short
-          echo "--- Querying for AAAA Record (IPv6 address) ---"
-          dig AAAA ${{ secrets.DB_HOST }} +short
-
       - name: Verify All Connection Pooler Secrets
         run: |
-          echo "Host: ${{ secrets.DB_HOST }}"
-          echo "Port: ${{ secrets.DB_PORT }}"
-          echo "User: ${{ secrets.DB_USER }}"
-          echo "Database Name: ${{ secrets.DB_NAME }}"
+          echo "User: ${{ secrets.DB_CONNECTION_STRING}}"
 
 
       - name: Run data collector script
         run: python main.py
         env:
-          DB_CONNECTION_STRING: ${{ secrets.SUPABASE_URI }}
+          DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING}}
           REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
           REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
           NEWS_API_KEY: ${{ secrets.NEWS_API_KEY }}
