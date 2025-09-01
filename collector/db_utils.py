@@ -21,17 +21,21 @@ def connect_db():
     We're using base64 to avoid invisible characters since i keep getting password errors
 
     """
+
+    encoded_string = "cG9zdGdyZXNxbDovL3Bvc3RncmVzLmVlcXRsd2NvZGJoY3dhdG96ZXdrOnRlc3Rpbmdmcm9tbG9jYWwyMDI0QGF3cy0wLXVzLWVhc3QtMi5wb29sZXIuc3VwYWJhc2UuY29tOjY1NDMvcG9zdGdyZXMK"
+    connection_string = base64.b64decode(encoded_string).decode("utf-8")
+
     try:
         # Get the BASE64 encoded string from the environment variable
-        encoded_string = os.getenv("DB_CONNECTION_STRING")
+        # encoded_string = os.getenv("DB_CONNECTION_STRING")
 
-        if not encoded_string:
-            logger.error("DB_CONNECTION_STRING environment variable not set.")
-            return None
+        # if not encoded_string:
+        #     logger.error("DB_CONNECTION_STRING environment variable not set.")
+        #     return None
 
         # Decode the string from Base64 back to its original form
-        connection_string = base64.b64decode(encoded_string).decode("utf-8")
-        print(connection_string)
+        # connection_string = base64.b64decode(encoded_string).decode("utf-8")
+        logging.info(f"DECODED CONNECTION STRING: {connection_string}")
 
         # Establish the connection with the decoded string
         connection = psycopg2.connect(connection_string)
@@ -40,6 +44,7 @@ def connect_db():
         return connection
     except Exception as e:
         logger.error(f"Error connecting to Supabase DB: {e}", exc_info=True)
+        logging.error(f"ERROR DECODED CONNECTION STRING: {connection_string}")
         return None
 
 
