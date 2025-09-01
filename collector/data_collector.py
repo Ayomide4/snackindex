@@ -25,11 +25,21 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 logging.getLogger("praw").setLevel(logging.INFO)
 
-CLIENT_ID = os.getenv("REDDIT_CLIENT_ID")
-CLIENT_SECRET = os.getenv("REDDIT_CLIENT_SECRET")
+
+def get_environment_variable(key):
+    # Gets an environment variable and strips whitespace.
+    value = os.getenv(key)
+    if value:
+        return value.strip()
+    logger.warning(f"Environment variable {key} not found.")
+    return None
+
+
+CLIENT_ID = get_environment_variable("REDDIT_CLIENT_ID")
+CLIENT_SECRET = get_environment_variable("REDDIT_CLIENT_SECRET")
 USER_AGENT = "SnackIndexCollector/0.1 by Taffe"
-NEWS_API_KEY = os.getenv("NEWS_API_KEY")
-FINNHUB_API_KEY = os.getenv("FINNHUB_API_KEY")
+NEWS_API_KEY = get_environment_variable("NEWS_API_KEY")
+FINNHUB_API_KEY = get_environment_variable("FINNHUB_API_KEY")
 SUBREDDITS_TO_SEARCH = "snacks+fastfood+food+soda"
 SEARCH_LIMIT = 20
 

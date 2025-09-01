@@ -16,22 +16,15 @@ LEFT JOIN snack_aliases a ON s.id = a.snack_id;"""
 
 
 def connect_db():
-    # connection_string = base64.b64decode(encoded_string).decode("utf-8").strip()
-
     try:
         connection_string = os.getenv("DB_CONNECTION_STRING")
-        # Get the BASE64 encoded string from the environment variable
-        # encoded_string = os.getenv("DB_CONNECTION_STRING")
 
         if not connection_string:
             logger.error("DB_CONNECTION_STRING environment variable not set.")
             return None
 
-        # Decode the string from Base64 back to its original form
-        # connection_string = base64.b64decode(encoded_string).decode("utf-8")
         logging.info(f"CONNECTION STRING: {connection_string}")
 
-        # Establish the connection with the decoded string
         connection = psycopg2.connect(connection_string.strip())
 
         logger.info("Connection to Supabase DB successful")
