@@ -1,20 +1,19 @@
 import datetime
+import random
 import logging
 import os
-import random
 import time
 
 import finnhub
 import pandas as pd
 import praw
 import praw.models
-from db_utils import save_metrics_to_db, get_last_known_prices_from_db
+from db_utils import get_last_known_prices_from_db, save_metrics_to_db
 from dotenv import load_dotenv
 from newsapi import NewsApiClient
+from pytrends.exceptions import ResponseError
 from pytrends.request import TrendReq
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-from pytrends.exceptions import ResponseError
-
 
 load_dotenv()
 logging.basicConfig(
@@ -48,14 +47,30 @@ cached_prices = {}
 
 
 pytrends = TrendReq(hl="en-US", tz=360)
-reddit = praw.Reddit(
-    client_id=CLIENT_ID,
-    client_secret=CLIENT_SECRET,
-    user_agent=USER_AGENT,
-)
 analyzer = SentimentIntensityAnalyzer()
-newsapi = NewsApiClient(api_key=NEWS_API_KEY)
-finnhub_client = finnhub.Client(api_key=FINNHUB_API_KEY)
+
+
+reddit = None
+if CLIENT_ID and CLIENT_SECRET:  # initialize reddit IF api keys exist
+    reddit = praw.Reddit(
+        client_id=CLIENT_ID,
+        client_secret=CLIENT_SECRET,
+        user_agent=USER_AGENT,
+    )
+else:
+    logger.error("Reddit credentials not found. Reddit functions will fail.")
+
+newsapi = None
+if NEWS_API_KEY:
+    newsapi = NewsApiClient(api_key=NEWS_API_KEY)
+else:
+    logger.error("NewsAPI credentials not found. News api functions will fail.")
+
+finnhub_client = None
+if FINNHUB_API_KEY:
+    finnhub_client = finnhub.Client(api_key=FINNHUB_API_KEY)
+else:
+    logger.error("Finnhub credentials not found. Finnhub functions will fail.")
 
 # time filter
 current_time_unix = int(time.time())
@@ -117,6 +132,12 @@ def get_google_trends_data(search_terms):
 def get_reddit_data(
     search_query, search_limit, search_terms, subreddits_to_search, time_filter_unix
 ):
+    if not reddit:
+        logging.warning(
+            "Reddit client not initialized. Skipping Reddit data collection."
+        )
+        return []
+
     # Fetches and analyzes mentions from Reddit within a given time window.
     reddit_mentions = []
     logging.info(f"Searching Reddit for query: '{search_query}'")
@@ -166,6 +187,12 @@ def get_reddit_data(
 
 
 def get_news_data(search_query, time_filter_iso):
+    if not newsapi:
+        logging.warning(
+            "NewsAPI client not initialized. Skipping NewsAPI data collection."
+        )
+        return []
+
     processed_titles = set()  # prevent duplicate news articles
     news_articles = []
 
@@ -219,6 +246,11 @@ def get_avg_sentiment(mentions):
 
 
 def get_stock_price(stock_ticker):
+    if not finnhub_client:
+        logging.warning(
+            "Finnhub client not initialized. Skipping Finnhub data collection."
+        )
+        return []
     logging.info(f"Starting Stock Price Lookup for {stock_ticker}")
 
     # stops multi fetching of same data
@@ -265,6 +297,12 @@ def run_collection_pipeline(snack_config, db_connection):
 
     for snack_name, config in snack_config.items():
         logging.info(f"Processing: {snack_name}")
+
+        sleep_time = random.uniform(2, 5)
+        logging.info(
+            f"Waiting for {sleep_time:.2f} seconds before Google Trends request..."
+        )
+        time.sleep(sleep_time)
 
         # start fetch data
         google_trends_score = get_google_trends_data(config["search_terms"])
