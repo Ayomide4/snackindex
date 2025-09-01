@@ -250,7 +250,7 @@ def get_stock_price(stock_ticker):
         logging.warning(
             "Finnhub client not initialized. Skipping Finnhub data collection."
         )
-        return []
+        return None
     logging.info(f"Starting Stock Price Lookup for {stock_ticker}")
 
     # stops multi fetching of same data
