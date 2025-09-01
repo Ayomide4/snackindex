@@ -22,7 +22,7 @@ def connect_db():
 
     """
 
-    encoded_string = "cG9zdGdyZXNxbDovL3Bvc3RncmVzLmVlcXRsd2NvZGJoY3dhdG96ZXdrOnRlc3Rpbmdmcm9tbG9jYWwyMDI0QGF3cy0wLXVzLWVhc3QtMi5wb29sZXIuc3VwYWJhc2UuY29tOjY1NDMvcG9zdGdyZXMK"
+    encoded_string = "cG9zdGdyZXNxbDovL3Bvc3RncmVzLmVlcXRsd2NvZGJoY3dhdG96ZXdrOnRlc3Rmcm9tbG9jYWwyMDI1QGF3cy0wLXVzLWVhc3QtMi5wb29sZXIuc3VwYWJhc2UuY29tOjY1NDMvcG9zdGdyZXMK"
     connection_string = base64.b64decode(encoded_string).decode("utf-8")
 
     try:
