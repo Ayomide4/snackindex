@@ -31,6 +31,7 @@ def connect_db():
 
         # Decode the string from Base64 back to its original form
         connection_string = base64.b64decode(encoded_string).decode("utf-8")
+        print(connection_string)
 
         # Establish the connection with the decoded string
         connection = psycopg2.connect(connection_string)
