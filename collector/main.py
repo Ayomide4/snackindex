@@ -1,7 +1,6 @@
 import json
 import logging
 from logging.handlers import TimedRotatingFileHandler
-import os
 
 from data_collector import run_collection_pipeline
 from db_utils import connect_db, fetch_data, close_db_connection, create_snack_config
@@ -9,8 +8,6 @@ from dotenv import load_dotenv
 
 
 load_dotenv()
-
-print(f"--- DEBUG: Loaded DB_HOST is: {os.getenv('DB_HOST')} ---")
 
 log_formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger()
