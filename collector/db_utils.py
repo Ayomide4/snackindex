@@ -1,11 +1,8 @@
 import logging
 import psycopg2
-import base64
 import os
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+
 logger = logging.getLogger(__name__)
 
 GET_SNACKS_QUERY = """

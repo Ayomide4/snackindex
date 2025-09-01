@@ -16,11 +16,7 @@ from pytrends.request import TrendReq
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 load_dotenv()
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    # level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+
 logger = logging.getLogger(__name__)
 logging.getLogger("praw").setLevel(logging.INFO)
 

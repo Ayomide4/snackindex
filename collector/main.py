@@ -25,10 +25,6 @@ file_handler = TimedRotatingFileHandler(
 file_handler.setFormatter(log_formatter)
 logger.addHandler(file_handler)
 
-# logging.basicConfig(
-#     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-# )
-# logger = logging.getLogger(__name__)
 
 # TODO:
 # - write code to bootstrap db (3 month pull data)
@@ -54,5 +50,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# postgresql://postgres.eeqtlwcodbhcwatozewk:testpasswordforactions2025@aws-0-us-east-2.pooler.supabase.com:6543/postgres
