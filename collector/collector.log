@@ -487,3 +487,12 @@ psycopg2.OperationalError: connection to server at "aws-0-us-east-2.pooler.supab
 2025-08-31 14:34:48,750 - INFO - News Articles: 0, Avg Sentiment: 0.0000
 2025-08-31 14:34:48,750 - INFO - Stock Price for PEP: $148.65
 2025-08-31 14:34:48,751 - INFO - Database connection closed.
+2025-09-01 13:54:49,371 - INFO - CONNECTION STRING: postgresql://postgres.eeqtlwcodbhcwatozewk:testfromlocal2025@aws-0-us-east-2.pooler.supabase.com:6543/postgres
+2025-09-01 13:54:49,822 - INFO - Connection to Supabase DB successful
+2025-09-01 13:54:49,823 - INFO - Fectching Data:
+2025-09-01 13:54:49,938 - INFO - Starting the Snack Index data collection pipeline.
+2025-09-01 13:54:49,938 - INFO - Fetching last known stock prices for fallback...
+2025-09-01 13:54:49,988 - INFO - Successfully created fallback map for 19 snacks.
+2025-09-01 13:54:49,989 - INFO - Processing: coca-cola
+2025-09-01 13:54:49,989 - INFO - Waiting for 4.02 seconds before Google Trends request...
+2025-09-01 13:54:54,479 - WARNING - Rate limit hit. Waiting for 5 seconds before retrying.

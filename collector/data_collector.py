@@ -82,7 +82,7 @@ def get_google_trends_data(search_terms):
         return 0
 
     max_retries = 3
-    retry_delay = 5
+    retry_delay = 15
 
     # retry api request
     for attempt in range(max_retries):
