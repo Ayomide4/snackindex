@@ -20,8 +20,6 @@ def connect_db():
             logger.error("DB_CONNECTION_STRING environment variable not set.")
             return None
 
-        logging.info(f"CONNECTION STRING: {connection_string}")
-
         connection = psycopg2.connect(connection_string.strip())
 
         logger.info("Connection to Supabase DB successful")
