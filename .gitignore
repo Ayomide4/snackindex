@@ -15,5 +15,6 @@
 **/.env.staging
 
 *.pyc
+*.log*
 
 venv/

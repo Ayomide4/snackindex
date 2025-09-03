@@ -718,3 +718,34 @@ psycopg2.OperationalError: connection to server at "aws-0-us-east-2.pooler.supab
 2025-09-01 14:13:07,328 - INFO - News Articles: 0, Avg Sentiment: 0.0000
 2025-09-01 14:13:07,328 - INFO - Stock Price for PEP: $148.65
 2025-09-01 14:13:07,329 - INFO - Database connection closed.
+2025-09-01 14:22:46,598 - ERROR - Error connecting to Supabase DB: connection to server at "aws-0-us-east-2.pooler.supabase.com" (3.139.14.59), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+Traceback (most recent call last):
+  File "/Users/ayoomotosho/projects/snackindex/collector/db_utils.py", line 23, in connect_db
+    connection = psycopg2.connect(connection_string.strip())
+  File "/Users/ayoomotosho/projects/snackindex/collector/venv/lib/python3.13/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "aws-0-us-east-2.pooler.supabase.com" (3.139.14.59), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-09-01 14:22:58,697 - ERROR - Error connecting to Supabase DB: connection to server at "aws-0-us-east-2.pooler.supabase.com" (13.59.95.192), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+Traceback (most recent call last):
+  File "/Users/ayoomotosho/projects/snackindex/collector/db_utils.py", line 23, in connect_db
+    connection = psycopg2.connect(connection_string.strip())
+  File "/Users/ayoomotosho/projects/snackindex/collector/venv/lib/python3.13/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "aws-0-us-east-2.pooler.supabase.com" (13.59.95.192), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-09-01 14:24:20,716 - ERROR - Error connecting to Supabase DB: connection to server at "aws-0-us-east-2.pooler.supabase.com" (13.59.95.192), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+Traceback (most recent call last):
+  File "/Users/ayoomotosho/projects/snackindex/collector/db_utils.py", line 23, in connect_db
+    connection = psycopg2.connect(connection_string.strip())
+  File "/Users/ayoomotosho/projects/snackindex/collector/venv/lib/python3.13/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "aws-0-us-east-2.pooler.supabase.com" (13.59.95.192), port 6543 failed: error received from server in SCRAM exchange: Wrong password
+
+2025-09-01 14:26:23,700 - INFO - Connection to Supabase DB successful
+2025-09-01 14:26:23,702 - INFO - Fectching Data:
+2025-09-01 14:26:23,806 - INFO - Starting the Snack Index data collection pipeline.
+2025-09-01 14:26:23,806 - INFO - Fetching last known stock prices for fallback...
+2025-09-01 14:26:23,856 - INFO - Successfully created fallback map for 19 snacks.
+2025-09-01 14:26:23,857 - INFO - Processing: coca-cola
+2025-09-01 14:26:23,857 - INFO - Waiting for 4.37 seconds before Google Trends request...

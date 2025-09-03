@@ -26,15 +26,6 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       
-      - name: Debug DB_HOST Secret
-        run: |
-          if [ -z "${{ secrets.DB_HOST }}" ]; then
-            echo "DB_HOST secret is empty or not set."
-          else
-            echo "DB_HOST secret is set and has a non-zero length."
-            echo "Value: '${{ secrets.DB_HOST }}'"
-          fi
-
       - name: Verify All Connection Pooler Secrets
         run: |
           echo "User: ${{ secrets.DB_CONNECTION_STRING}}"
