@@ -1,4 +1,5 @@
 import logging
+from math import log
 import psycopg2
 import os
 
@@ -134,8 +135,10 @@ def save_mentions_to_db(conn, snack_id, mentions):
     with conn.cursor() as cursor:
         for mention in mentions:
             try:
-                # Add snack_id to each mention dictionary for insertion
                 mention["snack_id"] = snack_id
+                mention["content"] = mention.get(
+                    "text", ""
+                )  # Safely get 'text' and map it to 'content'
 
                 cursor.execute(insert_query, mention)
                 if cursor.rowcount > 0:

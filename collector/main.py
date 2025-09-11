@@ -33,13 +33,13 @@ def main():
         logger.info("Fectching Data:")
         rows = fetch_data(conn)
         SNACK_CONFIG = create_snack_config(rows)
-        # logging.debug(json.dumps(SNACK_CONFIG, indent=2))
-        # run_collection_pipeline(SNACK_CONFIG, conn)
+        logging.debug(json.dumps(SNACK_CONFIG, indent=2))
+        run_collection_pipeline(SNACK_CONFIG, conn)
 
         # TESTING
-        first_snack_key = next(iter(SNACK_CONFIG))
-        test_config = {first_snack_key: SNACK_CONFIG[first_snack_key]}
-        run_collection_pipeline(test_config, conn)
+        # first_snack_key = next(iter(SNACK_CONFIG))
+        # test_config = {first_snack_key: SNACK_CONFIG[first_snack_key]}
+        # run_collection_pipeline(test_config, conn)
 
         close_db_connection(conn)
 

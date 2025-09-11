@@ -1,14 +1,18 @@
 import datetime
-import random
 import logging
 import os
+import random
 import time
 
 import finnhub
 import pandas as pd
 import praw
 import praw.models
-from db_utils import get_last_known_prices_from_db, save_metrics_to_db
+from db_utils import (
+    get_last_known_prices_from_db,
+    save_metrics_to_db,
+    save_mentions_to_db,
+)
 from dotenv import load_dotenv
 from newsapi import NewsApiClient
 from pytrends.exceptions import ResponseError
@@ -37,6 +41,7 @@ NEWS_API_KEY = get_environment_variable("NEWS_API_KEY")
 FINNHUB_API_KEY = get_environment_variable("FINNHUB_API_KEY")
 SUBREDDITS_TO_SEARCH = "snacks+fastfood+food+soda"
 SEARCH_LIMIT = 20
+MAX_MENTIONS_TO_SAVE = 5
 
 processed_stocks = set()
 cached_prices = {}
@@ -81,7 +86,7 @@ def get_google_trends_data(search_terms):
         logging.warning("Received an empty list for Google Trends search. Skipping.")
         return 0
 
-    max_retries = 3
+    max_retries = 1
     retry_delay = 15
 
     # retry api request
@@ -134,7 +139,6 @@ def get_reddit_data(
         )
         return []
 
-    # Fetches and analyzes mentions from Reddit within a given time window.
     reddit_mentions = []
     logging.info(f"Searching Reddit for query: '{search_query}'")
 
@@ -150,7 +154,7 @@ def get_reddit_data(
 
                 reddit_mentions.append(
                     {
-                        "content": post_text,
+                        "text": post_text,
                         "sentiment_score": sentiment_score,
                         "source": "Reddit Submission",
                         "source_name": submission.subreddit.display_name,
@@ -161,12 +165,10 @@ def get_reddit_data(
                     }
                 )
 
-                submission.comments.replace_more(limit=0)  # Load all top-level comments
+                submission.comments.replace_more(limit=0)
                 for comment in submission.comments.list():
-                    # ignores the load more comments button
                     if isinstance(comment, praw.models.MoreComments):
                         continue
-                    # Check if any of our search terms are in the comment
                     if any(
                         term.lower() in comment.body.lower() for term in search_terms
                     ):
@@ -175,7 +177,7 @@ def get_reddit_data(
                         ]
                         reddit_mentions.append(
                             {
-                                "content": comment.body,
+                                "text": comment.body,
                                 "sentiment_score": comment_score,
                                 "source": "Reddit Comment",
                                 "source_name": comment.subreddit.display_name,
@@ -186,7 +188,7 @@ def get_reddit_data(
                             }
                         )
     except Exception as e:
-        logging.error(f"An error occured while fetching from Reddit {e}")
+        logging.error(f"An error occurred while fetching from Reddit {e}")
         return []
 
     return reddit_mentions
@@ -199,7 +201,7 @@ def get_news_data(search_query, time_filter_iso):
         )
         return []
 
-    processed_urls = set()  # MODIFIED: Using URL to prevent duplicate articles
+    processed_urls = set()
     news_articles = []
     logging.info(f"Searching NewsAPI for query: '{search_query}'")
 
@@ -217,14 +219,12 @@ def get_news_data(search_query, time_filter_iso):
                 continue
 
             processed_urls.add(url)
-
             article_text = f"{article['title']} {article['description']}"
             sentiment_score = analyzer.polarity_scores(article_text)["compound"]
 
-            # MODIFIED: Appending a detailed dictionary for each news article
             news_articles.append(
                 {
-                    "content": article_text,
+                    "text": article_text,
                     "sentiment_score": sentiment_score,
                     "source": "NewsAPI",
                     "source_name": article["source"]["name"],
@@ -232,9 +232,8 @@ def get_news_data(search_query, time_filter_iso):
                     "published_at": article["publishedAt"],
                 }
             )
-
     except Exception as e:
-        logging.error(f"An error occurred while fetching news data: {e}")
+        logging.error(f"An error occurred while fetching news data {e}")
         return []
 
     return news_articles
@@ -247,7 +246,7 @@ def get_avg_sentiment(mentions):
     total = 0
 
     for mention in mentions:
-        total += mention["score"]
+        total += mention["sentiment_score"]
 
     avg = total / len(mentions)
 
@@ -306,6 +305,7 @@ def run_collection_pipeline(snack_config, db_connection):
 
     for snack_name, config in snack_config.items():
         logging.info(f"Processing: {snack_name}")
+        snack_id = config["snack_id"]
 
         sleep_time = random.uniform(2, 5)
         logging.info(
@@ -331,6 +331,12 @@ def run_collection_pipeline(snack_config, db_connection):
         )
         avg_news_sentiment = get_avg_sentiment(news_data)
         news_article_count = len(news_data)
+
+        mentions_to_save = (
+            reddit_data[:MAX_MENTIONS_TO_SAVE] + news_data[:MAX_MENTIONS_TO_SAVE]
+        )
+        if mentions_to_save:
+            save_mentions_to_db(db_connection, snack_id, mentions_to_save)
 
         stock_ticker = config.get("stock_ticker")
         stock_price = None
