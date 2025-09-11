@@ -150,9 +150,14 @@ def get_reddit_data(
 
                 reddit_mentions.append(
                     {
-                        "text": post_text,
-                        "score": sentiment_score,
-                        "source": "submission",
+                        "content": post_text,
+                        "sentiment_score": sentiment_score,
+                        "source": "Reddit Submission",
+                        "source_name": submission.subreddit.display_name,
+                        "url": f"https://www.reddit.com{submission.permalink}",
+                        "published_at": datetime.datetime.fromtimestamp(
+                            submission.created_utc, tz=datetime.timezone.utc
+                        ).isoformat(),
                     }
                 )
 
@@ -170,9 +175,14 @@ def get_reddit_data(
                         ]
                         reddit_mentions.append(
                             {
-                                "text": comment.body,
-                                "score": comment_score,
-                                "source": "comment",
+                                "content": comment.body,
+                                "sentiment_score": comment_score,
+                                "source": "Reddit Comment",
+                                "source_name": comment.subreddit.display_name,
+                                "url": f"https://www.reddit.com{comment.permalink}",
+                                "published_at": datetime.datetime.fromtimestamp(
+                                    comment.created_utc, tz=datetime.timezone.utc
+                                ).isoformat(),
                             }
                         )
     except Exception as e:
@@ -189,12 +199,10 @@ def get_news_data(search_query, time_filter_iso):
         )
         return []
 
-    processed_titles = set()  # prevent duplicate news articles
+    processed_urls = set()  # MODIFIED: Using URL to prevent duplicate articles
     news_articles = []
-
     logging.info(f"Searching NewsAPI for query: '{search_query}'")
 
-    # news collection
     try:
         all_articles = newsapi.get_everything(
             q=search_query,
@@ -204,24 +212,29 @@ def get_news_data(search_query, time_filter_iso):
         )
 
         for article in all_articles["articles"]:
-            title = article["title"]
-
-            if title in processed_titles:
+            url = article["url"]
+            if url in processed_urls:
                 continue
 
-            processed_titles.add(title)
+            processed_urls.add(url)
 
-            article_text = f"{title} {article['description']}"
+            article_text = f"{article['title']} {article['description']}"
             sentiment_score = analyzer.polarity_scores(article_text)["compound"]
+
+            # MODIFIED: Appending a detailed dictionary for each news article
             news_articles.append(
                 {
-                    "text": article_text,
-                    "score": sentiment_score,
+                    "content": article_text,
+                    "sentiment_score": sentiment_score,
+                    "source": "NewsAPI",
                     "source_name": article["source"]["name"],
+                    "url": url,
+                    "published_at": article["publishedAt"],
                 }
             )
+
     except Exception as e:
-        logging.error(f"An error occured while fetching news data {e}")
+        logging.error(f"An error occurred while fetching news data: {e}")
         return []
 
     return news_articles

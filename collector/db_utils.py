@@ -118,6 +118,40 @@ def create_snack_config(db_results):
     return snack_config
 
 
+def save_mentions_to_db(conn, snack_id, mentions):
+    if not mentions:
+        return
+
+    insert_query = """
+            INSERT INTO snack_mentions (
+                snack_id, source, source_name, content, url, sentiment_score, published_at
+            ) VALUES (
+                %(snack_id)s, %(source)s, %(source_name)s, %(content)s, %(url)s, %(sentiment_score)s, %(published_at)s
+            )
+            ON CONFLICT (url) DO NOTHING;
+        """
+    saved_count = 0
+    with conn.cursor() as cursor:
+        for mention in mentions:
+            try:
+                # Add snack_id to each mention dictionary for insertion
+                mention["snack_id"] = snack_id
+
+                cursor.execute(insert_query, mention)
+                if cursor.rowcount > 0:
+                    saved_count += 1
+            except Exception as e:
+                logging.error(
+                    f"Failed to insert mention with URL {mention.get('url')}: {e}"
+                )
+
+        conn.commit()
+        if saved_count > 0:
+            logging.info(
+                f"Successfully inserted {saved_count} new mentions for snack_id {snack_id}."
+            )
+
+
 def save_metrics_to_db(connection, metrics):
     UPSERT_METRICS_QUERY = """
         INSERT INTO daily_metrics (
