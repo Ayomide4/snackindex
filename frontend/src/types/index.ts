@@ -11,7 +11,9 @@ export interface Snack {
 export interface Company {
   id: number;
   name: string;
-  ticker_symbol?: string;
+  stock_ticker?: string;
+  stock_exchange?: string;
+  ticker_symbol?: string; // Keep for backward compatibility
   created_at?: string;
   updated_at?: string;
 }
@@ -43,6 +45,8 @@ export interface MetricSummary {
   snack_name: string;
   snack_id: number;
   company_name: string;
+  stock_ticker?: string;
+  stock_exchange?: string;
   current_trends_score: number;
   trends_change: number;
   reddit_mentions: number;
@@ -97,4 +101,11 @@ export interface SnackDetailData {
   sentimentData: SentimentData[];
   newsArticles: NewsArticle[];
   overallSentimentScore: number;
+  company: {
+    name: string;
+    stockTicker?: string;
+    stockExchange?: string;
+    currentStockPrice?: number;
+    stockChange?: number;
+  };
 }

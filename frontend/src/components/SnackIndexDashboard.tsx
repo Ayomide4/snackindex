@@ -148,12 +148,31 @@ const generateSnackDetailData = (snack: TrendingSnack): SnackDetailData => {
     },
   ];
   
+  // Mock company data based on the snack brand
+  const getCompanyInfo = (brand: string) => {
+    const companyMap: Record<string, { name: string; stockTicker: string; stockExchange: string; price: number; change: number }> = {
+      "Frito Lay": { name: "PepsiCo, Inc.", stockTicker: "PEP", stockExchange: "NASDAQ", price: 172.45, change: 2.1 },
+      "Kettle": { name: "Campbell Soup Company", stockTicker: "CPB", stockExchange: "NYSE", price: 48.23, change: 1.8 },
+      "Pringles": { name: "Kellanova", stockTicker: "K", stockExchange: "NYSE", price: 65.80, change: -0.5 },
+    };
+    return companyMap[brand] || { name: brand, stockTicker: undefined, stockExchange: undefined, price: undefined, change: undefined };
+  };
+  
+  const companyInfo = getCompanyInfo(snack.brand);
+  
   return {
     snack,
     timelineData,
     sentimentData,
     newsArticles,
     overallSentimentScore: 7.8,
+    company: {
+      name: companyInfo.name,
+      stockTicker: companyInfo.stockTicker,
+      stockExchange: companyInfo.stockExchange,
+      currentStockPrice: companyInfo.price,
+      stockChange: companyInfo.change,
+    },
   };
 };
 

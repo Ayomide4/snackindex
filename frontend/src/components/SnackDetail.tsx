@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, TrendingUp, TrendingDown, GitCompare, MessageCircle, Calendar, ExternalLink } from "lucide-react";
+import { ArrowLeft, TrendingUp, TrendingDown, GitCompare, MessageCircle, Calendar, ExternalLink, Building2, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,8 +15,9 @@ interface SnackDetailProps {
 }
 
 export function SnackDetail({ data, onBack }: SnackDetailProps) {
-  const { snack, timelineData, sentimentData, newsArticles, overallSentimentScore } = data;
+  const { snack, timelineData, sentimentData, newsArticles, overallSentimentScore, company } = data;
   const isPositive = snack.change > 0;
+  const isStockPositive = (company.stockChange || 0) > 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-amber-50">
@@ -158,8 +159,74 @@ export function SnackDetail({ data, onBack }: SnackDetailProps) {
             </Card>
           </div>
 
-          {/* Sentiment Analysis */}
-          <div>
+          {/* Right Column */}
+          <div className="space-y-8">
+            {/* Company Information */}
+            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Building2 className="h-5 w-5 text-red-600" />
+                  Company Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div>
+                    <div className="text-sm text-gray-500 mb-1">Parent Company</div>
+                    <div className="text-lg font-semibold text-gray-900">{company.name}</div>
+                  </div>
+                  
+                  {company.stockTicker && (
+                    <>
+                      <Separator />
+                      <div>
+                        <div className="text-sm text-gray-500 mb-2">Stock Information</div>
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="font-mono text-xs">
+                              {company.stockExchange}:{company.stockTicker}
+                            </Badge>
+                          </div>
+                          {company.currentStockPrice && (
+                            <div className="text-right">
+                              <div className="flex items-center gap-2">
+                                <DollarSign className="h-4 w-4 text-green-600" />
+                                <span className="text-lg font-bold text-gray-900">
+                                  ${company.currentStockPrice.toFixed(2)}
+                                </span>
+                              </div>
+                              {company.stockChange !== undefined && (
+                                <div className="flex items-center gap-1 justify-end mt-1">
+                                  {isStockPositive ? (
+                                    <TrendingUp className="h-3 w-3 text-green-600" />
+                                  ) : (
+                                    <TrendingDown className="h-3 w-3 text-red-500" />
+                                  )}
+                                  <span
+                                    className={`text-xs font-medium ${
+                                      isStockPositive ? "text-green-600" : "text-red-500"
+                                    }`}
+                                  >
+                                    {company.stockChange > 0 ? "+" : ""}{company.stockChange.toFixed(2)}%
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                        {!company.currentStockPrice && (
+                          <div className="text-sm text-gray-400 italic">
+                            Stock price not available
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Sentiment Analysis */}
             <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
               <CardHeader>
                 <CardTitle className="text-lg">Social Media Sentiment</CardTitle>
