@@ -90,6 +90,7 @@ export class MentionsService {
       console.error('Error fetching mentions by source:', error);
       return [];
     }
-    ta;
+
+    return data;
   }
 }

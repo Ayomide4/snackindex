@@ -10,7 +10,6 @@ import { SnackList } from "@/components/SnackList";
 import { SnackDetail } from "@/components/SnackDetail";
 import { TrendingSnack, SnackDetailData } from "@/types";
 
-// Mock data - this would come from your API
 const trendingSnacks: TrendingSnack[] = [
   {
     id: 1,
@@ -102,7 +101,7 @@ const allSnacks: TrendingSnack[] = [
 const generateSnackDetailData = (snack: TrendingSnack): SnackDetailData => {
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const timelineData = [];
-  
+
   for (let i = 0; i < 12; i++) {
     const variation = (Math.random() - 0.5) * 30;
     const score = Math.max(10, Math.min(100, snack.score + variation));
@@ -111,16 +110,16 @@ const generateSnackDetailData = (snack: TrendingSnack): SnackDetailData => {
       value: Math.round(score),
     });
   }
-  
+
   // Ensure the last data point matches current score
   timelineData[timelineData.length - 1].value = snack.score;
-  
+
   const sentimentData = [
     { type: "Positive" as const, percentage: 65, color: "#10B981" },
     { type: "Neutral" as const, percentage: 25, color: "#6B7280" },
     { type: "Negative" as const, percentage: 10, color: "#EF4444" },
   ];
-  
+
   const newsArticles = [
     {
       id: 1,
@@ -147,7 +146,7 @@ const generateSnackDetailData = (snack: TrendingSnack): SnackDetailData => {
       sentiment: "positive" as const,
     },
   ];
-  
+
   // Mock company data based on the snack brand
   const getCompanyInfo = (brand: string) => {
     const companyMap: Record<string, { name: string; stockTicker: string; stockExchange: string; price: number; change: number }> = {
@@ -157,9 +156,9 @@ const generateSnackDetailData = (snack: TrendingSnack): SnackDetailData => {
     };
     return companyMap[brand] || { name: brand, stockTicker: undefined, stockExchange: undefined, price: undefined, change: undefined };
   };
-  
+
   const companyInfo = getCompanyInfo(snack.brand);
-  
+
   return {
     snack,
     timelineData,

@@ -10,7 +10,7 @@ export class SnacksService {
     const { data, error } = await this.supabaseService
       .getClient()
       .from('snacks')
-      .select('id, name, created_at, company_name:companies(name)');
+      .select('id, name, created_at, company:companies(name)');
 
     if (error) {
       console.error('Error fetching snacks:', error);
@@ -19,4 +19,21 @@ export class SnacksService {
 
     return data;
   }
+
+  async findOne(id: number): Promise<any> {
+    const { data, error } = await this.supabaseService
+      .getClient()
+      .from('snacks')
+      .select('id, name, created_at, company:companies(name)')
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      console.error(`Error fetching snack with id ${id}:`, error);
+      throw new Error(`Snack with ID ${id} not found`);
+    }
+
+    return data;
+  }
+
 }

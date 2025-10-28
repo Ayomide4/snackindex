@@ -3,4 +3,5 @@ export declare class SnacksController {
     private readonly snacksService;
     constructor(snacksService: SnacksService);
     findAll(): Promise<any[]>;
+    findOne(id: number): Promise<any>;
 }

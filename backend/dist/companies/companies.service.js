@@ -9,10 +9,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SnacksService = void 0;
+exports.CompaniesService = void 0;
 const common_1 = require("@nestjs/common");
 const supabase_service_1 = require("../supabase/supabase.service");
-let SnacksService = class SnacksService {
+let CompaniesService = class CompaniesService {
     supabaseService;
     constructor(supabaseService) {
         this.supabaseService = supabaseService;
@@ -20,31 +20,19 @@ let SnacksService = class SnacksService {
     async findAll() {
         const { data, error } = await this.supabaseService
             .getClient()
-            .from('snacks')
-            .select('id, name, created_at, company:companies(name)');
+            .from('companies')
+            .select('*')
+            .order('name');
         if (error) {
-            console.error('Error fetching snacks:', error);
+            console.error('Error fetching companies:', error);
             throw new Error(error.message);
         }
         return data;
     }
-    async findOne(id) {
-        const { data, error } = await this.supabaseService
-            .getClient()
-            .from('snacks')
-            .select('id, name, created_at, company:companies(name)')
-            .eq('id', id)
-            .single();
-        if (error) {
-            console.error(`Error fetching snack with id ${id}:`, error);
-            throw new Error(`Snack with ID ${id} not found`);
-        }
-        return data;
-    }
 };
-exports.SnacksService = SnacksService;
-exports.SnacksService = SnacksService = __decorate([
+exports.CompaniesService = CompaniesService;
+exports.CompaniesService = CompaniesService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [supabase_service_1.SupabaseService])
-], SnacksService);
-//# sourceMappingURL=snacks.service.js.map
+], CompaniesService);
+//# sourceMappingURL=companies.service.js.map
