@@ -1,20 +1,14 @@
 import { notFound } from "next/navigation";
+import { SnackDetail } from "@/components/SnackDetail";
+import { api } from "@/lib/api";
 
-interface Snack {
-  id: number;
-  name: string;
-  company: { name: string };
-}
+// This function runs at build time and revalidates every 24 hours
+export const revalidate = 86400 //daily
 
 export async function generateStaticParams() {
   try {
-    const res = await fetch("http://localhost:3000/snacks");
-    if (!res.ok) {
-      throw new Error("Failed to fetch snacks for static path generation");
-    }
-    const snacks = await res.json();
-
-    return snacks.map((snack: Snack) => ({
+    const snacks = await api.getSnacks();
+    return snacks.map((snack) => ({
       id: String(snack.id),
     }));
   } catch (error) {
@@ -23,20 +17,19 @@ export async function generateStaticParams() {
   }
 }
 
-async function getSnack(id: string) {
-  const res = await fetch(`http://localhost:3000/snacks/${id}`);
-  if (!res.ok) {
+export default async function SnackPage({ params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params;
+    const snackDetailData = await api.getSnackDetailData(parseInt(id));
+
+    return (
+      <SnackDetail
+        data={snackDetailData}
+        onBack={() => window.history.back()}
+      />
+    );
+  } catch (error) {
+    console.error("Failed to fetch snack detail:", error);
     notFound();
   }
-  return res.json();
-}
-
-export default async function SnackPage({ params }: { params: { id: string } }) {
-  const snack = await getSnack(params.id);
-
-  return (
-    <div>
-      <h1>{snack.name} </h1>
-    </div>
-  );
 }

@@ -1,45 +1,21 @@
 import { SnackIndexDashboard } from "@/components/SnackIndexDashboard";
-import type { GetStaticPaths, GetStaticProps } from 'next'
+import { api } from "@/lib/api";
+import { config } from "@/lib/config";
 
-interface Snack {
-  id: number;
-  name: string;
-  company: { name: string };
-}
+// This function runs at build time and revalidates every 24 hours
+// export const revalidate = config.revalidate.daily;
 
-// Next.js recognizes and executes this function.
-// The console.log output will appear in your terminal.
-export const getStaticPaths: GetStaticPaths = async () => {
+export const revalidate = 86400 //daily
+
+export default async function Home() {
   try {
-    // Correctly point to the /snacks endpoint
-    const res = await fetch("http://localhost:3000/snacks");
+    // Fetch trending snacks data at build time
+    const trendingSnacks = await api.getTrendingSnacks();
 
-    // Check if the response is ok before trying to parse JSON
-    if (!res.ok) {
-      throw new Error(`Failed to fetch snacks: ${res.status}`);
-    }
-
-    const snacks = await res.json();
-    console.log("Fetched snacks in getStaticPaths:", snacks);
-
-    // Ensure the paths are correctly returned
-    const paths = snacks.map((snack: Snack) => ({
-      params: { id: String(snack.id) },
-    }));
-
-    return {
-      paths,
-      fallback: 'blocking',
-    };
+    return <SnackIndexDashboard initialData={trendingSnacks} />;
   } catch (error) {
-    console.error("Failed to fetch snacks in getStaticPaths:", error);
-    return {
-      paths: [],
-      fallback: 'blocking',
-    };
+    console.error("Failed to fetch initial data:", error);
+    // Return the component without initial data - it will handle loading states
+    return <SnackIndexDashboard />;
   }
-};
-
-export default function Home() {
-  return <SnackIndexDashboard />;
 }

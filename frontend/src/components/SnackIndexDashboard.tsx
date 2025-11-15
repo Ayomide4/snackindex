@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, TrendingUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,182 +9,102 @@ import { SnackCard } from "@/components/SnackCard";
 import { SnackList } from "@/components/SnackList";
 import { SnackDetail } from "@/components/SnackDetail";
 import { TrendingSnack, SnackDetailData } from "@/types";
+import { api } from "@/lib/api";
 
-const trendingSnacks: TrendingSnack[] = [
-  {
-    id: 1,
-    name: "Doritos Nacho Cheese",
-    brand: "Frito Lay",
-    score: 89,
-    change: 3.2,
-    trending: "up",
-    color: "#FF6B35",
-  },
-  {
-    id: 2,
-    name: "Lay's Classic",
-    brand: "Frito Lay",
-    score: 76,
-    change: -0.5,
-    trending: "down",
-    color: "#FFD23F",
-  },
-  {
-    id: 3,
-    name: "Cheetos Puffs",
-    brand: "Frito Lay",
-    score: 84,
-    change: 2.1,
-    trending: "up",
-    color: "#FF8C42",
-  },
-];
-
-const allSnacks: TrendingSnack[] = [
-  {
-    id: 1,
-    name: "Doritos Nacho Cheese",
-    brand: "Frito Lay",
-    score: 89,
-    change: 3.2,
-    trending: "up",
-    color: "#FF6B35",
-  },
-  {
-    id: 2,
-    name: "Kettle Brand Sea Salt",
-    brand: "Kettle",
-    score: 84,
-    change: 4.5,
-    trending: "up",
-    color: "#2E8B57",
-  },
-  {
-    id: 3,
-    name: "Cheetos Puffs",
-    brand: "Frito Lay",
-    score: 76,
-    change: 2.1,
-    trending: "up",
-    color: "#FF8C42",
-  },
-  {
-    id: 4,
-    name: "Pringles Original",
-    brand: "Pringles",
-    score: 72,
-    change: 1.8,
-    trending: "up",
-    color: "#C70039",
-  },
-  {
-    id: 5,
-    name: "Lay's Classic",
-    brand: "Frito Lay",
-    score: 68,
-    change: -0.5,
-    trending: "down",
-    color: "#FFD23F",
-  },
-  {
-    id: 6,
-    name: "Ruffles Cheddar",
-    brand: "Frito Lay",
-    score: 65,
-    change: -1.2,
-    trending: "down",
-    color: "#FFC300",
-  },
-];
-
-// Mock function to generate detail data
-const generateSnackDetailData = (snack: TrendingSnack): SnackDetailData => {
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const timelineData = [];
-
-  for (let i = 0; i < 12; i++) {
-    const variation = (Math.random() - 0.5) * 30;
-    const score = Math.max(10, Math.min(100, snack.score + variation));
-    timelineData.push({
-      date: months[i],
-      value: Math.round(score),
-    });
-  }
-
-  // Ensure the last data point matches current score
-  timelineData[timelineData.length - 1].value = snack.score;
-
-  const sentimentData = [
-    { type: "Positive" as const, percentage: 65, color: "#10B981" },
-    { type: "Neutral" as const, percentage: 25, color: "#6B7280" },
-    { type: "Negative" as const, percentage: 10, color: "#EF4444" },
+// Default colors for snacks
+const getSnackColor = (id: number): string => {
+  const colors = [
+    "#FF6B35", // Doritos Nacho Cheese
+    "#FFD23F", // Lay's Classic
+    "#FF8C42", // Cheetos Puffs
+    "#2E8B57", // Kettle Brand Sea Salt
+    "#C70039", // Pringles Original
+    "#FFC300", // Ruffles Cheddar
+    "#FF69B4", // Sun Chips Harvest Cheddar
+    "#32CD32", // Tostitos Scoops
   ];
-
-  const newsArticles = [
-    {
-      id: 1,
-      title: `${snack.name} Sales Surge 25% in Q4 Following New Marketing Campaign`,
-      source: "Food Industry News",
-      date: "2 days ago",
-      summary: "The popular snack brand saw significant growth after launching their innovative social media strategy targeting Gen Z consumers.",
-      sentiment: "positive" as const,
-    },
-    {
-      id: 2,
-      title: `Health Experts Weigh In on Popular Snack Trends Including ${snack.name}`,
-      source: "Nutrition Today",
-      date: "1 week ago",
-      summary: "Nutritionists discuss the growing demand for better-for-you snack options and how traditional brands are adapting.",
-      sentiment: "neutral" as const,
-    },
-    {
-      id: 3,
-      title: `Social Media Buzz: ${snack.name} Goes Viral on TikTok`,
-      source: "Social Media Tribune",
-      date: "2 weeks ago",
-      summary: "A viral TikTok trend featuring creative recipes with the snack has generated millions of views and increased brand awareness.",
-      sentiment: "positive" as const,
-    },
-  ];
-
-  // Mock company data based on the snack brand
-  const getCompanyInfo = (brand: string) => {
-    const companyMap: Record<string, { name: string; stockTicker: string; stockExchange: string; price: number; change: number }> = {
-      "Frito Lay": { name: "PepsiCo, Inc.", stockTicker: "PEP", stockExchange: "NASDAQ", price: 172.45, change: 2.1 },
-      "Kettle": { name: "Campbell Soup Company", stockTicker: "CPB", stockExchange: "NYSE", price: 48.23, change: 1.8 },
-      "Pringles": { name: "Kellanova", stockTicker: "K", stockExchange: "NYSE", price: 65.80, change: -0.5 },
-    };
-    return companyMap[brand] || { name: brand, stockTicker: undefined, stockExchange: undefined, price: undefined, change: undefined };
-  };
-
-  const companyInfo = getCompanyInfo(snack.brand);
-
-  return {
-    snack,
-    timelineData,
-    sentimentData,
-    newsArticles,
-    overallSentimentScore: 7.8,
-    company: {
-      name: companyInfo.name,
-      stockTicker: companyInfo.stockTicker,
-      stockExchange: companyInfo.stockExchange,
-      currentStockPrice: companyInfo.price,
-      stockChange: companyInfo.change,
-    },
-  };
+  return colors[(id - 1) % colors.length];
 };
 
-export function SnackIndexDashboard() {
-  const [selectedSnack, setSelectedSnack] = useState<TrendingSnack | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
+// Function to fetch snack detail data from API
+const fetchSnackDetailData = async (snackId: number): Promise<SnackDetailData> => {
+  return await api.getSnackDetailData(snackId);
+};
 
-  const handleSnackSelect = (snack: TrendingSnack) => {
+interface SnackIndexDashboardProps {
+  initialData?: TrendingSnack[];
+}
+
+export function SnackIndexDashboard({ initialData }: SnackIndexDashboardProps) {
+  const [selectedSnack, setSelectedSnack] = useState<TrendingSnack | null>(null);
+  const [selectedSnackDetail, setSelectedSnackDetail] = useState<SnackDetailData | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [trendingSnacks, setTrendingSnacks] = useState<TrendingSnack[]>(initialData || []);
+  const [allSnacks, setAllSnacks] = useState<TrendingSnack[]>([]);
+  const [loading, setLoading] = useState(!initialData);
+  const [detailLoading, setDetailLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [trendingData, allSnacksData] = await Promise.all([
+          api.getTrendingSnacks(),
+          api.getAllSnacks()
+        ]);
+        
+        // Add colors to the snacks from API
+        const trendingWithColors = trendingData.map(snack => ({
+          ...snack,
+          color: getSnackColor(snack.id)
+        }));
+        
+        const allSnacksWithColors = allSnacksData.map(snack => ({
+          ...snack,
+          color: getSnackColor(snack.id)
+        }));
+        
+        setTrendingSnacks(trendingWithColors);
+        setAllSnacks(allSnacksWithColors);
+      } catch (error) {
+        console.error("Failed to fetch snacks data:", error);
+        // Fallback to empty arrays if API fails
+        setTrendingSnacks([]);
+        setAllSnacks([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (!initialData) {
+      fetchData();
+    } else {
+      // Add colors to initial data if provided
+      const initialWithColors = initialData.map(snack => ({
+        ...snack,
+        color: getSnackColor(snack.id)
+      }));
+      setTrendingSnacks(initialWithColors);
+    }
+  }, [initialData]);
+
+  const handleSnackSelect = async (snack: TrendingSnack) => {
     setSelectedSnack(snack);
+    setDetailLoading(true);
+    
+    try {
+      const detailData = await fetchSnackDetailData(snack.id);
+      setSelectedSnackDetail(detailData);
+    } catch (error) {
+      console.error("Failed to fetch snack detail:", error);
+    } finally {
+      setDetailLoading(false);
+    }
   };
 
   const handleBackToIndex = () => {
     setSelectedSnack(null);
+    setSelectedSnackDetail(null);
   };
 
   const filteredSnacks = allSnacks.filter(snack =>
@@ -193,11 +113,35 @@ export function SnackIndexDashboard() {
   );
 
   if (selectedSnack) {
+    if (detailLoading) {
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-amber-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading snack details...</p>
+          </div>
+        </div>
+      );
+    }
+
+    if (selectedSnackDetail) {
+      return (
+        <SnackDetail
+          data={selectedSnackDetail}
+          onBack={handleBackToIndex}
+        />
+      );
+    }
+  }
+
+  if (loading) {
     return (
-      <SnackDetail
-        data={generateSnackDetailData(selectedSnack)}
-        onBack={handleBackToIndex}
-      />
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-amber-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading snack data...</p>
+        </div>
+      </div>
     );
   }
 

@@ -1,7 +1,8 @@
 import { MetricSummary, TrendingSnack, DailyMetric, Snack, Company } from "@/types";
 import { calculateOverallScore } from "./utils";
+import { config } from "./config";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
+const API_BASE_URL = config.apiUrl;
 
 export class APIError extends Error {
   constructor(message: string, public status?: number) {
@@ -64,6 +65,11 @@ export const api = {
     }));
   },
 
+  // Get detailed snack information with all data for detail page
+  getSnackDetailData: async (snackId: number): Promise<Snack> => {
+    return fetchAPI<Snack>(`/snacks/${snackId}/detail`);
+  },
+
   // Get detailed metrics for a specific snack
   getSnackDetail: async (snackId: number): Promise<DailyMetric[]> => {
     return fetchAPI<DailyMetric[]>(`/snacks/${snackId}/metrics`);
@@ -102,7 +108,7 @@ export const api = {
 export function transformMetricsToSummary(metrics: DailyMetric[], snack: Snack): MetricSummary {
   const latestMetric = metrics[0]; // Assuming sorted by date desc
   const previousMetric = metrics[1];
-  
+
   const overallScore = calculateOverallScore({
     google_trends_score: latestMetric.google_trends_score,
     reddit_mentions: latestMetric.reddit_mentions,
@@ -125,7 +131,7 @@ export function transformMetricsToSummary(metrics: DailyMetric[], snack: Snack):
     snack_id: snack.id,
     company_name: snack.company?.name || "Unknown",
     current_trends_score: latestMetric.google_trends_score || 0,
-    trends_change: latestMetric.google_trends_score && previousMetric?.google_trends_score 
+    trends_change: latestMetric.google_trends_score && previousMetric?.google_trends_score
       ? ((latestMetric.google_trends_score - previousMetric.google_trends_score) / previousMetric.google_trends_score) * 100
       : 0,
     reddit_mentions: latestMetric.reddit_mentions || 0,
