@@ -23,8 +23,23 @@ let SnacksController = class SnacksController {
     findAll() {
         return this.snacksService.findAll();
     }
+    getAllWithMetrics() {
+        return this.snacksService.getAllWithMetrics();
+    }
+    getTrending() {
+        return this.snacksService.getTrending();
+    }
+    search(query) {
+        return this.snacksService.search(query);
+    }
     findOne(id) {
         return this.snacksService.findOne(id);
+    }
+    getMetrics(id, days) {
+        return this.snacksService.getMetrics(id, days);
+    }
+    getDetail(id) {
+        return this.snacksService.getDetail(id);
     }
 };
 exports.SnacksController = SnacksController;
@@ -35,12 +50,46 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], SnacksController.prototype, "findAll", null);
 __decorate([
+    (0, common_1.Get)('all'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], SnacksController.prototype, "getAllWithMetrics", null);
+__decorate([
+    (0, common_1.Get)('trending'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], SnacksController.prototype, "getTrending", null);
+__decorate([
+    (0, common_1.Get)('search'),
+    __param(0, (0, common_1.Query)('q')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], SnacksController.prototype, "search", null);
+__decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], SnacksController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Get)(':id/metrics'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Query)('days')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number]),
+    __metadata("design:returntype", void 0)
+], SnacksController.prototype, "getMetrics", null);
+__decorate([
+    (0, common_1.Get)(':id/detail'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], SnacksController.prototype, "getDetail", null);
 exports.SnacksController = SnacksController = __decorate([
     (0, common_1.Controller)('snacks'),
     __metadata("design:paramtypes", [snacks_service_1.SnacksService])

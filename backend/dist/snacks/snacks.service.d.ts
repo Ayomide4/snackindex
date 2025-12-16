@@ -4,4 +4,12 @@ export declare class SnacksService {
     constructor(supabaseService: SupabaseService);
     findAll(): Promise<any[]>;
     findOne(id: number): Promise<any>;
+    getAllWithMetrics(): Promise<any[]>;
+    getTrending(): Promise<any[]>;
+    search(query: string): Promise<any[]>;
+    getMetrics(id: number, days?: number): Promise<any[]>;
+    getDetail(id: number): Promise<any>;
+    private calculateOverallScore;
+    private calculateTrendsChange;
+    private calculateStockChange;
 }
