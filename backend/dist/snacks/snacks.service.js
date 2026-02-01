@@ -194,13 +194,14 @@ let SnacksService = class SnacksService {
             .from('daily_metrics')
             .select('*')
             .eq('snack_id', id)
-            .order('date', { ascending: true })
+            .order('date', { ascending: false })
             .limit(30);
         if (metricsError) {
             console.error(`Error fetching metrics for snack ${id}:`, metricsError);
             throw new Error(`Failed to fetch metrics: ${metricsError.message}`);
         }
-        const latestMetrics = metricsData?.[metricsData.length - 1];
+        const latestMetrics = metricsData?.[0];
+        console.log("latest metric", metricsData);
         const timelineData = metricsData?.map(metric => ({
             date: metric.date,
             value: metric.google_trends_score || 0

@@ -7,7 +7,7 @@ export class SnacksService {
 
   async findAll(): Promise<any[]> {
     const supabase = this.supabaseService.getClient();
-    
+
     const { data, error } = await supabase
       .from('snacks')
       .select(`
@@ -33,7 +33,7 @@ export class SnacksService {
 
   async findOne(id: number): Promise<any> {
     const supabase = this.supabaseService.getClient();
-    
+
     const { data, error } = await supabase
       .from('snacks')
       .select(`
@@ -60,7 +60,7 @@ export class SnacksService {
 
   async getAllWithMetrics(): Promise<any[]> {
     const supabase = this.supabaseService.getClient();
-    
+
     // Get the most recent metrics for each snack
     const { data, error } = await supabase
       .from('daily_metrics')
@@ -96,7 +96,7 @@ export class SnacksService {
 
     // Group by snack_id and get the latest metrics for each
     const snackMetricsMap = new Map();
-    
+
     data.forEach(metric => {
       if (!snackMetricsMap.has(metric.snack_id)) {
         snackMetricsMap.set(metric.snack_id, metric);
@@ -107,8 +107,8 @@ export class SnacksService {
     const results: any[] = [];
     for (const [snackId, latestMetric] of snackMetricsMap) {
       // Find the previous day's metric for trend calculation
-      const previousMetric = data.find(m => 
-        m.snack_id === snackId && 
+      const previousMetric = data.find(m =>
+        m.snack_id === snackId &&
         m.date !== latestMetric.date
       );
 
@@ -152,7 +152,7 @@ export class SnacksService {
 
   async search(query: string): Promise<any[]> {
     const supabase = this.supabaseService.getClient();
-    
+
     const { data, error } = await supabase
       .from('snacks')
       .select(`
@@ -181,15 +181,15 @@ export class SnacksService {
     // Get metrics for the found snacks
     const snackIds = data.map(snack => snack.id);
     const allSnacksWithMetrics = await this.getAllWithMetrics();
-    
-    return allSnacksWithMetrics.filter(snack => 
+
+    return allSnacksWithMetrics.filter(snack =>
       snackIds.includes(snack.snack_id)
     );
   }
 
   async getMetrics(id: number, days: number = 30): Promise<any[]> {
     const supabase = this.supabaseService.getClient();
-    
+
     const { data, error } = await supabase
       .from('daily_metrics')
       .select('*')
@@ -207,7 +207,7 @@ export class SnacksService {
 
   async getDetail(id: number): Promise<any> {
     const supabase = this.supabaseService.getClient();
-    
+
     // Get snack details
     const { data: snackData, error: snackError } = await supabase
       .from('snacks')
@@ -234,7 +234,7 @@ export class SnacksService {
       .from('daily_metrics')
       .select('*')
       .eq('snack_id', id)
-      .order('date', { ascending: true })
+      .order('date', { ascending: false })
       .limit(30);
 
     if (metricsError) {
@@ -243,8 +243,9 @@ export class SnacksService {
     }
 
     // Get the latest metrics for overall score
-    const latestMetrics = metricsData?.[metricsData.length - 1];
-    
+    const latestMetrics = metricsData?.[0];
+    console.log("latest metric", metricsData)
+
     // Generate timeline data
     const timelineData = metricsData?.map(metric => ({
       date: metric.date,
@@ -314,7 +315,7 @@ export class SnacksService {
 
   private calculateOverallScore(metric: any): number {
     if (!metric) return 0;
-    
+
     const weights = {
       google_trends: 0.4,
       reddit: 0.3,
