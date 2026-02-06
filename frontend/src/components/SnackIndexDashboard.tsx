@@ -87,6 +87,7 @@ export function SnackIndexDashboard({ initialData }: SnackIndexDashboardProps) {
         color: getSnackColor(snack.id)
       }));
       setTrendingSnacks(initialWithColors);
+      console.log(trendingSnacks)
     }
   }, [initialData]);
 

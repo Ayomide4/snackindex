@@ -13,9 +13,9 @@ interface SnackCardProps {
 
 export function SnackCard({ snack, onSelect }: SnackCardProps) {
   const isPositive = snack.change > 0;
-  
+
   return (
-    <Card 
+    <Card
       className="group hover:shadow-2xl transition-all duration-300 cursor-pointer border-0 bg-white/80 backdrop-blur-sm hover:scale-105"
       onClick={() => onSelect(snack)}
     >
@@ -34,15 +34,14 @@ export function SnackCard({ snack, onSelect }: SnackCardProps) {
               <TrendingDown className="h-4 w-4 text-red-500" />
             )}
             <span
-              className={`text-sm ${
-                isPositive ? "text-green-600" : "text-red-500"
-              }`}
+              className={`text-sm ${isPositive ? "text-green-600" : "text-red-500"
+                }`}
             >
               {formatPercentage(snack.change)}
             </span>
           </div>
         </div>
-        
+
         <div className="flex items-end justify-between">
           <div>
             <div className="text-3xl font-bold text-gray-900 mb-1">{snack.score}</div>
@@ -50,21 +49,20 @@ export function SnackCard({ snack, onSelect }: SnackCardProps) {
               Search Score
             </div>
           </div>
-          
+
           <div className="text-right">
-            <Badge 
+            <Badge
               variant={isPositive ? "default" : "destructive"}
-              className={`${
-                isPositive 
-                  ? "bg-green-100 text-green-700 hover:bg-green-200" 
-                  : "bg-red-100 text-red-700 hover:bg-red-200"
-              }`}
+              className={`${isPositive
+                ? "bg-green-100 text-green-700 hover:bg-green-200"
+                : "bg-red-100 text-red-700 hover:bg-red-200"
+                }`}
             >
-              {snack.trending === "up" ? "Trending" : "Declining"}
+              {isPositive ? "Trending" : "Declining"}
             </Badge>
           </div>
         </div>
-        
+
         {/* Search score bar */}
         <div className="mt-4">
           <div className="w-full bg-gray-200 rounded-full h-2">

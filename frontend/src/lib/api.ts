@@ -46,9 +46,9 @@ export const api = {
       id: summary.snack_id,
       name: summary.snack_name,
       brand: summary.company_name,
-      score: summary.overall_score,
+      score: summary.current_trends_score,
       change: summary.trends_change,
-      trending: summary.trends_change >= 0 ? "up" : "down",
+      trending: summary.trends_change > 0 ? "up" : "down",
     }));
   },
 
@@ -59,9 +59,9 @@ export const api = {
       id: summary.snack_id,
       name: summary.snack_name,
       brand: summary.company_name,
-      score: summary.overall_score,
+      score: summary.current_trends_score,
       change: summary.trends_change,
-      trending: summary.trends_change >= 0 ? "up" : "down",
+      trending: summary.trends_change > 0 ? "up" : "down",
     }));
   },
 
@@ -97,9 +97,9 @@ export const api = {
       id: summary.snack_id,
       name: summary.snack_name,
       brand: summary.company_name,
-      score: summary.overall_score,
+      score: summary.current_trends_score,
       change: summary.trends_change,
-      trending: summary.trends_change >= 0 ? "up" : "down",
+      trending: summary.trends_change > 0 ? "up" : "down",
     }));
   },
 
