@@ -121,4 +121,5 @@ export interface SnackDetailData {
     currentStockPrice?: number;
     stockChange?: number;
   };
+  mentions?: Mention[];
 }

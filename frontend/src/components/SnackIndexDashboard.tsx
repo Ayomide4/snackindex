@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { SnackCard } from "@/components/SnackCard";
 import { SnackList } from "@/components/SnackList";
 import { SnackDetail } from "@/components/SnackDetail";
-import { TrendingSnack, SnackDetailData, Mention } from "@/types";
+import { TrendingSnack, SnackDetailData } from "@/types";
 import { api } from "@/lib/api";
 
 // Default colors for snacks
@@ -42,7 +42,6 @@ export function SnackIndexDashboard({ initialData }: SnackIndexDashboardProps) {
   const [selectedSnackDetail, setSelectedSnackDetail] = useState<SnackDetailData | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [trendingSnacks, setTrendingSnacks] = useState<TrendingSnack[]>(initialData || []);
-  const [snackMentions, setSnackMentions] = useState<Mention[]>([]);
   const [allSnacks, setAllSnacks] = useState<TrendingSnack[]>([]);
   const [loading, setLoading] = useState(!initialData);
   const [detailLoading, setDetailLoading] = useState(false);
@@ -96,13 +95,15 @@ export function SnackIndexDashboard({ initialData }: SnackIndexDashboardProps) {
     setDetailLoading(true);
 
     try {
-      const detailData = await fetchSnackDetailData(snack.id);
-      const mentionData = await fetchSnackMentionsData(snack.id)
+      const [detailData, mentionData] = await Promise.all([
+        fetchSnackDetailData(snack.id),
+        fetchSnackMentionsData(snack.id)
+      ]);
 
-      console.log(detailData)
-      // console.log(mentionData)
-      setSnackMentions(mentionData);
-      setSelectedSnackDetail(detailData);
+      setSelectedSnackDetail({
+        ...detailData,
+        mentions: mentionData
+      });
     } catch (error) {
       console.error("Failed to fetch snack detail:", error);
     } finally {

@@ -11,14 +11,31 @@ import { formatPercentage } from "@/lib/utils";
 
 interface SnackDetailProps {
   data: SnackDetailData;
-  // mentions: Mention[];
   onBack: () => void;
 }
 
+// Helper to convert sentiment score to label
+const getSentimentLabel = (score: number): "positive" | "neutral" | "negative" => {
+  if (score >= 0.3) return "positive";
+  if (score <= -0.3) return "negative";
+  return "neutral";
+};
+
+// Helper to format date
+const formatDate = (dateString?: string): string => {
+  if (!dateString) return "Unknown date";
+  return new Date(dateString).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
+
 export function SnackDetail({ data, onBack }: SnackDetailProps) {
-  const { snack, timelineData, sentimentData, newsArticles, overallSentimentScore, company } = data;
+  const { snack, timelineData, sentimentData, overallSentimentScore, company, mentions } = data;
   const isPositive = snack.change > 0;
   const isStockPositive = (company.stockChange || 0) > 0;
+  const latestMentions = (mentions || []).slice(0, 2);
 
 
 
@@ -124,39 +141,49 @@ export function SnackDetail({ data, onBack }: SnackDetailProps) {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {newsArticles.map((article) => (
-                    <div key={article.id} className="border-l-4 border-red-200 pl-4 hover:bg-gray-50/50 p-3 rounded-r-lg transition-colors">
-                      <div className="flex items-start justify-between mb-2">
-                        <h4 className="text-gray-900 font-medium leading-relaxed">
-                          {article.title}
-                        </h4>
-                        <Badge
-                          variant="secondary"
-                          className={`ml-2 ${article.sentiment === 'positive'
-                            ? 'bg-green-100 text-green-700'
-                            : article.sentiment === 'negative'
-                              ? 'bg-red-100 text-red-700'
-                              : 'bg-gray-100 text-gray-700'
-                            }`}
-                        >
-                          {article.sentiment}
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-gray-600 mb-2">{article.summary}</p>
-                      <div className="flex items-center justify-between text-xs text-gray-500">
-                        <div className="flex items-center gap-3">
-                          <span className="font-medium">{article.source}</span>
-                          <span className="flex items-center gap-1">
-                            <Calendar className="h-3 w-3" />
-                            {article.date}
-                          </span>
+                  {latestMentions.length > 0 ? (
+                    latestMentions.map((mention) => {
+                      const sentiment = getSentimentLabel(mention.sentiment_score);
+                      return (
+                        <div key={mention.id} className="border-l-4 border-red-200 pl-4 hover:bg-gray-50/50 p-3 rounded-r-lg transition-colors">
+                          <div className="flex items-start justify-between mb-2">
+                            <p className="text-gray-900 font-medium leading-relaxed line-clamp-2">
+                              {mention.content}
+                            </p>
+                            <Badge
+                              variant="secondary"
+                              className={`ml-2 shrink-0 ${sentiment === 'positive'
+                                ? 'bg-green-100 text-green-700'
+                                : sentiment === 'negative'
+                                  ? 'bg-red-100 text-red-700'
+                                  : 'bg-gray-100 text-gray-700'
+                                }`}
+                            >
+                              {sentiment}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center justify-between text-xs text-gray-500">
+                            <div className="flex items-center gap-3">
+                              <span className="font-medium">{mention.source.includes("Reddit") ? "Reddit" : mention.source_name}</span>
+                              <span className="flex items-center gap-1">
+                                <Calendar className="h-3 w-3" />
+                                {formatDate(mention.published_at)}
+                              </span>
+                            </div>
+                            {mention.url && (
+                              <a href={mention.url} target="_blank" rel="noopener noreferrer">
+                                <Button variant="ghost" size="sm" className="h-auto p-1">
+                                  <ExternalLink className="h-3 w-3" />
+                                </Button>
+                              </a>
+                            )}
+                          </div>
                         </div>
-                        <Button variant="ghost" size="sm" className="h-auto p-1">
-                          <ExternalLink className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
+                      );
+                    })
+                  ) : (
+                    <p className="text-gray-500 text-sm">No recent mentions available.</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
