@@ -6,11 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { SnackDetailData } from "@/types";
+import { Mention, SnackDetailData } from "@/types";
 import { formatPercentage } from "@/lib/utils";
 
 interface SnackDetailProps {
   data: SnackDetailData;
+  // mentions: Mention[];
   onBack: () => void;
 }
 
@@ -18,6 +19,10 @@ export function SnackDetail({ data, onBack }: SnackDetailProps) {
   const { snack, timelineData, sentimentData, newsArticles, overallSentimentScore, company } = data;
   const isPositive = snack.change > 0;
   const isStockPositive = (company.stockChange || 0) > 0;
+
+
+
+  const reverseTimeline = timelineData.toReversed()
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-amber-50">
@@ -46,7 +51,7 @@ export function SnackDetail({ data, onBack }: SnackDetailProps) {
                 <p className="text-xl text-gray-600">{snack.brand}</p>
               </div>
               <div className="text-right">
-                <div className="text-4xl font-bold text-gray-900 mb-2">{snack.score}</div>
+                <div className="text-4xl font-bold text-gray-900 mb-2">{timelineData[0].value}</div>
                 <div className="text-sm text-gray-500 uppercase tracking-wide mb-2">
                   Current Search Score
                 </div>
@@ -57,9 +62,8 @@ export function SnackDetail({ data, onBack }: SnackDetailProps) {
                     <TrendingDown className="h-5 w-5 text-red-500" />
                   )}
                   <span
-                    className={`text-lg font-semibold ${
-                      isPositive ? "text-green-600" : "text-red-500"
-                    }`}
+                    className={`text-lg font-semibold ${isPositive ? "text-green-600" : "text-red-500"
+                      }`}
                   >
                     {formatPercentage(snack.change)}
                   </span>
@@ -91,7 +95,7 @@ export function SnackDetail({ data, onBack }: SnackDetailProps) {
               <CardContent>
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={timelineData}>
+                    <LineChart data={reverseTimeline}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="date" />
                       <YAxis domain={[0, 100]} />
@@ -128,13 +132,12 @@ export function SnackDetail({ data, onBack }: SnackDetailProps) {
                         </h4>
                         <Badge
                           variant="secondary"
-                          className={`ml-2 ${
-                            article.sentiment === 'positive'
-                              ? 'bg-green-100 text-green-700'
-                              : article.sentiment === 'negative'
+                          className={`ml-2 ${article.sentiment === 'positive'
+                            ? 'bg-green-100 text-green-700'
+                            : article.sentiment === 'negative'
                               ? 'bg-red-100 text-red-700'
                               : 'bg-gray-100 text-gray-700'
-                          }`}
+                            }`}
                         >
                           {article.sentiment}
                         </Badge>
@@ -175,7 +178,7 @@ export function SnackDetail({ data, onBack }: SnackDetailProps) {
                     <div className="text-sm text-gray-500 mb-1">Parent Company</div>
                     <div className="text-lg font-semibold text-gray-900">{company.name}</div>
                   </div>
-                  
+
                   {company.stockTicker && (
                     <>
                       <Separator />
@@ -203,9 +206,8 @@ export function SnackDetail({ data, onBack }: SnackDetailProps) {
                                     <TrendingDown className="h-3 w-3 text-red-500" />
                                   )}
                                   <span
-                                    className={`text-xs font-medium ${
-                                      isStockPositive ? "text-green-600" : "text-red-500"
-                                    }`}
+                                    className={`text-xs font-medium ${isStockPositive ? "text-green-600" : "text-red-500"
+                                      }`}
                                   >
                                     {company.stockChange > 0 ? "+" : ""}{company.stockChange.toFixed(2)}%
                                   </span>
@@ -251,16 +253,16 @@ export function SnackDetail({ data, onBack }: SnackDetailProps) {
                     </div>
                   ))}
                 </div>
-                
+
                 <Separator className="my-6" />
-                
+
                 <div className="text-center">
                   <div className="text-2xl font-bold text-gray-900 mb-1">{overallSentimentScore}/10</div>
                   <div className="text-sm text-gray-500 mb-2">Overall Sentiment Score</div>
                   <Badge className="bg-green-100 text-green-700 hover:bg-green-200">
-                    {overallSentimentScore >= 7 ? "Highly Positive" : 
-                     overallSentimentScore >= 5 ? "Positive" : 
-                     overallSentimentScore >= 3 ? "Neutral" : "Negative"}
+                    {overallSentimentScore >= 7 ? "Highly Positive" :
+                      overallSentimentScore >= 5 ? "Positive" :
+                        overallSentimentScore >= 3 ? "Neutral" : "Negative"}
                   </Badge>
                 </div>
               </CardContent>

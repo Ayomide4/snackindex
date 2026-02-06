@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { SnackCard } from "@/components/SnackCard";
 import { SnackList } from "@/components/SnackList";
 import { SnackDetail } from "@/components/SnackDetail";
-import { TrendingSnack, SnackDetailData } from "@/types";
+import { TrendingSnack, SnackDetailData, Mention } from "@/types";
 import { api } from "@/lib/api";
 
 // Default colors for snacks
@@ -31,6 +31,8 @@ const fetchSnackDetailData = async (snackId: number): Promise<SnackDetailData> =
   return await api.getSnackDetailData(snackId);
 };
 
+const fetchSnackMentionsData = async (snackId: number): Promise<any> => { return await api.getSnackMentions(snackId) }
+
 interface SnackIndexDashboardProps {
   initialData?: TrendingSnack[];
 }
@@ -40,6 +42,7 @@ export function SnackIndexDashboard({ initialData }: SnackIndexDashboardProps) {
   const [selectedSnackDetail, setSelectedSnackDetail] = useState<SnackDetailData | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [trendingSnacks, setTrendingSnacks] = useState<TrendingSnack[]>(initialData || []);
+  const [snackMentions, setSnackMentions] = useState<Mention[]>([]);
   const [allSnacks, setAllSnacks] = useState<TrendingSnack[]>([]);
   const [loading, setLoading] = useState(!initialData);
   const [detailLoading, setDetailLoading] = useState(false);
@@ -52,18 +55,18 @@ export function SnackIndexDashboard({ initialData }: SnackIndexDashboardProps) {
           api.getTrendingSnacks(),
           api.getAllSnacks()
         ]);
-        
+
         // Add colors to the snacks from API
         const trendingWithColors = trendingData.map(snack => ({
           ...snack,
           color: getSnackColor(snack.id)
         }));
-        
+
         const allSnacksWithColors = allSnacksData.map(snack => ({
           ...snack,
           color: getSnackColor(snack.id)
         }));
-        
+
         setTrendingSnacks(trendingWithColors);
         setAllSnacks(allSnacksWithColors);
       } catch (error) {
@@ -91,9 +94,14 @@ export function SnackIndexDashboard({ initialData }: SnackIndexDashboardProps) {
   const handleSnackSelect = async (snack: TrendingSnack) => {
     setSelectedSnack(snack);
     setDetailLoading(true);
-    
+
     try {
       const detailData = await fetchSnackDetailData(snack.id);
+      const mentionData = await fetchSnackMentionsData(snack.id)
+
+      console.log(detailData)
+      // console.log(mentionData)
+      setSnackMentions(mentionData);
       setSelectedSnackDetail(detailData);
     } catch (error) {
       console.error("Failed to fetch snack detail:", error);

@@ -1,4 +1,4 @@
-import { MetricSummary, TrendingSnack, DailyMetric, Snack, Company } from "@/types";
+import { MetricSummary, TrendingSnack, DailyMetric, Snack, Company, Mention } from "@/types";
 import { calculateOverallScore } from "./utils";
 import { config } from "./config";
 
@@ -102,6 +102,26 @@ export const api = {
       trending: summary.trends_change >= 0 ? "up" : "down",
     }));
   },
+
+  getSnackMentions: async (snackId: number): Promise<Mention[]> => {
+    const mentions: Mention[] = await fetchAPI(`/mentions/snack/${snackId}`)
+    console.log(mentions)
+
+    return mentions.map((mention: Mention) => ({
+      id: mention.id,
+      snack_id: mention.snack_id,
+      source: mention.source,
+      source_name: mention.source_name,
+      content: mention.content,
+      url: mention.url,
+      sentiment_score: mention.sentiment_score,
+      published_at: mention.published_at,
+      created_at: mention.created_at,
+      snack_name: mention.snack_name
+    }))
+
+
+  }
 };
 
 // Utility function to transform database metrics to display format

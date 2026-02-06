@@ -41,6 +41,19 @@ export interface DailyMetric {
   snack?: Snack;
 }
 
+export interface Mention {
+  id: number;
+  snack_id: number;
+  source: string;
+  source_name: string;
+  content: string;
+  url: string;
+  sentiment_score: number;
+  published_at?: string;
+  created_at?: string;
+  snack_name?: string;
+}
+
 export interface MetricSummary {
   snack_name: string;
   snack_id: number;
