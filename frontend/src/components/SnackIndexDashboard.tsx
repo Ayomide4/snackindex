@@ -26,7 +26,7 @@ const getSnackColor = (id: number): string => {
   return colors[(id - 1) % colors.length];
 };
 
-// Function to fetch snack detail data from API
+// Function to fetch snack detail data from API  
 const fetchSnackDetailData = async (snackId: number): Promise<SnackDetailData> => {
   return await api.getSnackDetailData(snackId);
 };

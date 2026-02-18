@@ -96,13 +96,17 @@ let SnacksService = class SnacksService {
         const snackMetricsMap = new Map();
         data.forEach(metric => {
             if (!snackMetricsMap.has(metric.snack_id)) {
-                snackMetricsMap.set(metric.snack_id, metric);
+                snackMetricsMap.set(metric.snack_id, []);
+            }
+            const snackMetrics = snackMetricsMap.get(metric.snack_id);
+            if (snackMetrics.length < 30) {
+                snackMetrics.push(metric);
             }
         });
         const results = [];
-        for (const [snackId, latestMetric] of snackMetricsMap) {
-            const previousMetric = data.find(m => m.snack_id === snackId &&
-                m.date !== latestMetric.date);
+        for (const [snackId, metrics] of snackMetricsMap) {
+            const latestMetric = metrics[0];
+            const previousMetric = metrics.length > 2 ? metrics[metrics.length - 2] : (metrics.length > 1 ? metrics[1] : undefined);
             const trendsChange = this.calculateTrendsChange(latestMetric.google_trends_score, previousMetric?.google_trends_score);
             const stockChange = this.calculateStockChange(latestMetric.stock_close_price, previousMetric?.stock_close_price);
             const overallScore = this.calculateOverallScore(latestMetric);
@@ -201,7 +205,6 @@ let SnacksService = class SnacksService {
             throw new Error(`Failed to fetch metrics: ${metricsError.message}`);
         }
         const latestMetrics = metricsData?.[0];
-        console.log("latest metric", metricsData);
         const timelineData = metricsData?.map(metric => ({
             date: metric.date,
             value: metric.google_trends_score || 0

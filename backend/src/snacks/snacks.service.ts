@@ -94,23 +94,26 @@ export class SnacksService {
       return [];
     }
 
-    // Group by snack_id and get the latest metrics for each
-    const snackMetricsMap = new Map();
+    // Group by snack_id and collect metrics for each snack (limited to 30 like getDetail)
+    const snackMetricsMap = new Map<number, any[]>();
 
     data.forEach(metric => {
       if (!snackMetricsMap.has(metric.snack_id)) {
-        snackMetricsMap.set(metric.snack_id, metric);
+        snackMetricsMap.set(metric.snack_id, []);
+      }
+      const snackMetrics = snackMetricsMap.get(metric.snack_id)!;
+      // Only keep up to 30 metrics per snack (matching getDetail's limit)
+      if (snackMetrics.length < 30) {
+        snackMetrics.push(metric);
       }
     });
 
-    // Calculate trends_change by comparing with previous day's data
+    // Calculate trends_change by comparing with second-to-last metric (matching getDetail logic)
     const results: any[] = [];
-    for (const [snackId, latestMetric] of snackMetricsMap) {
-      // Find the previous day's metric for trend calculation
-      const previousMetric = data.find(m =>
-        m.snack_id === snackId &&
-        m.date !== latestMetric.date
-      );
+    for (const [snackId, metrics] of snackMetricsMap) {
+      const latestMetric = metrics[0]; // Most recent (data is ordered by date desc)
+      // Compare against the second-to-last metric in the range (matching getDetail: metricsData[length - 2])
+      const previousMetric = metrics.length > 2 ? metrics[metrics.length - 2] : (metrics.length > 1 ? metrics[1] : undefined);
 
       const trendsChange = this.calculateTrendsChange(
         latestMetric.google_trends_score,
@@ -244,7 +247,7 @@ export class SnacksService {
 
     // Get the latest metrics for overall score
     const latestMetrics = metricsData?.[0];
-    console.log("latest metric", metricsData)
+    // console.log("latest metric", metricsData)
 
     // Generate timeline data
     const timelineData = metricsData?.map(metric => ({
@@ -253,6 +256,7 @@ export class SnacksService {
     })) || [];
 
     // Generate sentiment data (mock for now - could be calculated from reddit/news sentiment)
+    // TODO
     const sentimentData = [
       { type: "Positive" as const, percentage: Math.round((latestMetrics?.avg_reddit_sentiment || 0.5) * 100), color: "#10B981" },
       { type: "Neutral" as const, percentage: 25, color: "#6B7280" },
