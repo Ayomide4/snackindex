@@ -89,14 +89,14 @@ export function SnackDetail({ data, onBack }: SnackDetailProps) {
               </div>
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="flex gap-4">
-              <Button className="bg-red-600 hover:bg-red-700 text-white">
-                <GitCompare className="h-4 w-4 mr-2" />
-                Compare with Other Snacks
-              </Button>
-            </div>
-          </CardContent>
+          {/* <CardContent> */}
+          {/*   <div className="flex gap-4"> */}
+          {/*     <Button className="bg-red-600 hover:bg-red-700 text-white"> */}
+          {/*       <GitCompare className="h-4 w-4 mr-2" /> */}
+          {/*       Compare with Other Snacks */}
+          {/*     </Button> */}
+          {/*   </div> */}
+          {/* </CardContent> */}
         </Card>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -145,39 +145,40 @@ export function SnackDetail({ data, onBack }: SnackDetailProps) {
                     latestMentions.map((mention) => {
                       const sentiment = getSentimentLabel(mention.sentiment_score);
                       return (
-                        <div key={mention.id} className="border-l-4 border-red-200 pl-4 hover:bg-gray-50/50 p-3 rounded-r-lg transition-colors">
-                          <div className="flex items-start justify-between mb-2">
-                            <p className="text-gray-900 font-medium leading-relaxed line-clamp-2">
-                              {mention.content}
-                            </p>
-                            <Badge
-                              variant="secondary"
-                              className={`ml-2 shrink-0 ${sentiment === 'positive'
-                                ? 'bg-green-100 text-green-700'
-                                : sentiment === 'negative'
-                                  ? 'bg-red-100 text-red-700'
-                                  : 'bg-gray-100 text-gray-700'
-                                }`}
-                            >
-                              {sentiment}
-                            </Badge>
-                          </div>
-                          <div className="flex items-center justify-between text-xs text-gray-500">
-                            <div className="flex items-center gap-3">
-                              <span className="font-medium">{mention.source.includes("Reddit") ? "Reddit" : mention.source_name}</span>
-                              <span className="flex items-center gap-1">
-                                <Calendar className="h-3 w-3" />
-                                {formatDate(mention.published_at)}
-                              </span>
+                        <div key={mention.id} className="border-l-4 border-red-200 hover:border-red-700 pl-4 hover:bg-gray-50/50 p-3 rounded-r-lg transition-colors">
+
+                          <a href={mention.url} target="_blank" rel="noopener noreferrer">
+                            <div className="flex items-start justify-between mb-2">
+                              <p className="text-gray-900 font-medium leading-relaxed line-clamp-2">
+                                {mention.content}
+                              </p>
+                              <Badge
+                                variant="secondary"
+                                className={`ml-2 shrink-0 ${sentiment === 'positive'
+                                  ? 'bg-green-100 text-green-700'
+                                  : sentiment === 'negative'
+                                    ? 'bg-red-100 text-red-700'
+                                    : 'bg-gray-100 text-gray-700'
+                                  }`}
+                              >
+                                {sentiment}
+                              </Badge>
                             </div>
-                            {mention.url && (
-                              <a href={mention.url} target="_blank" rel="noopener noreferrer">
-                                <Button variant="ghost" size="sm" className="h-auto p-1">
+                            <div className="flex items-center justify-between text-xs text-gray-500">
+                              <div className="flex items-center gap-3">
+                                <span className="font-medium">{mention.source.includes("Reddit") ? "Reddit" : mention.source_name}</span>
+                                <span className="flex items-center gap-1">
+                                  <Calendar className="h-3 w-3" />
+                                  {formatDate(mention.published_at)}
+                                </span>
+                              </div>
+                              {mention.url && (
+                                <Button variant="ghost" size="sm" className="h-auto p-1 cursor-pointer">
                                   <ExternalLink className="h-3 w-3" />
                                 </Button>
-                              </a>
-                            )}
-                          </div>
+                              )}
+                            </div>
+                          </a>
                         </div>
                       );
                     })
