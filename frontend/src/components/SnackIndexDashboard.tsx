@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { SnackCard } from "@/components/SnackCard";
 import { SnackList } from "@/components/SnackList";
 import { SnackDetail } from "@/components/SnackDetail";
-import { TrendingSnack, SnackDetailData } from "@/types";
+import { TrendingSnack, SnackDetailData, Mention } from "@/types";
 import { api } from "@/lib/api";
 
 // Default colors for snacks
@@ -31,7 +31,7 @@ const fetchSnackDetailData = async (snackId: number): Promise<SnackDetailData> =
   return await api.getSnackDetailData(snackId);
 };
 
-const fetchSnackMentionsData = async (snackId: number): Promise<any> => { return await api.getSnackMentions(snackId) }
+const fetchSnackMentionsData = async (snackId: number): Promise<Mention[]> => { return await api.getSnackMentions(snackId) }
 
 interface SnackIndexDashboardProps {
   initialData?: TrendingSnack[];
@@ -42,7 +42,7 @@ export function SnackIndexDashboard({ initialData }: SnackIndexDashboardProps) {
   const [selectedSnackDetail, setSelectedSnackDetail] = useState<SnackDetailData | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [trendingSnacks, setTrendingSnacks] = useState<TrendingSnack[]>(initialData || []);
-  const [allSnacks, setAllSnacks] = useState<TrendingSnack[]>([]);
+  const [, setAllSnacks] = useState<TrendingSnack[]>([]);
   const [loading, setLoading] = useState(!initialData);
   const [detailLoading, setDetailLoading] = useState(false);
 
@@ -78,7 +78,6 @@ export function SnackIndexDashboard({ initialData }: SnackIndexDashboardProps) {
       }
     };
 
-    console.log(trendingSnacks)
     if (!initialData) {
       fetchData();
     } else {

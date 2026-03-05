@@ -1,4 +1,4 @@
-import { MetricSummary, TrendingSnack, DailyMetric, Snack, Company, Mention } from "@/types";
+import { MetricSummary, TrendingSnack, DailyMetric, Snack, SnackDetailData, Company, Mention } from "@/types";
 import { calculateOverallScore } from "./utils";
 import { config } from "./config";
 
@@ -66,8 +66,8 @@ export const api = {
   },
 
   // Get detailed snack information with all data for detail page
-  getSnackDetailData: async (snackId: number): Promise<Snack> => {
-    return fetchAPI<Snack>(`/snacks/${snackId}/detail`);
+  getSnackDetailData: async (snackId: number): Promise<SnackDetailData> => {
+    return fetchAPI<SnackDetailData>(`/snacks/${snackId}/detail`);
   },
 
   // Get detailed metrics for a specific snack

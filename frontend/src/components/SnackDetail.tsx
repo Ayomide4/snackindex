@@ -1,12 +1,12 @@
 "use client";
 
-import { ArrowLeft, TrendingUp, TrendingDown, GitCompare, MessageCircle, Calendar, ExternalLink, Building2, DollarSign } from "lucide-react";
+import { ArrowLeft, TrendingUp, TrendingDown, MessageCircle, Calendar, ExternalLink, Building2, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { Mention, SnackDetailData } from "@/types";
+import { SnackDetailData } from "@/types";
 import { formatPercentage } from "@/lib/utils";
 
 interface SnackDetailProps {

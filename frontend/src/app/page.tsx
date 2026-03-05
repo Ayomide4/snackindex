@@ -1,6 +1,5 @@
 import { SnackIndexDashboard } from "@/components/SnackIndexDashboard";
 import { api } from "@/lib/api";
-import { config } from "@/lib/config";
 
 // This function runs at build time and revalidates every 24 hours
 // export const revalidate = config.revalidate.daily;
