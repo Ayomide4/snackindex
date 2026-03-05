@@ -68,7 +68,6 @@ export function SnackIndexDashboard({ initialData }: SnackIndexDashboardProps) {
 
         setTrendingSnacks(trendingWithColors);
         setAllSnacks(allSnacksWithColors);
-        console.log("all", allSnacksWithColors)
       } catch (error) {
         console.error("Failed to fetch snacks data:", error);
         // Fallback to empty arrays if API fails
@@ -79,6 +78,7 @@ export function SnackIndexDashboard({ initialData }: SnackIndexDashboardProps) {
       }
     };
 
+    console.log(trendingSnacks)
     if (!initialData) {
       fetchData();
     } else {

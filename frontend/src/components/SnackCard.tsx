@@ -22,7 +22,7 @@ export function SnackCard({ snack, onSelect }: SnackCardProps) {
       <CardContent className="p-6">
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
-            <h3 className="text-lg text-gray-900 mb-1 group-hover:text-red-700 transition-colors">
+            <h3 data-testid="name" className="text-lg text-gray-900 mb-1 group-hover:text-red-700 transition-colors">
               {snack.name}
             </h3>
             <p className="text-sm text-gray-500">{snack.brand}</p>
