@@ -68,6 +68,7 @@ export function SnackIndexDashboard({ initialData }: SnackIndexDashboardProps) {
 
         setTrendingSnacks(trendingWithColors);
         setAllSnacks(allSnacksWithColors);
+        console.log("all", allSnacksWithColors)
       } catch (error) {
         console.error("Failed to fetch snacks data:", error);
         // Fallback to empty arrays if API fails
@@ -87,7 +88,6 @@ export function SnackIndexDashboard({ initialData }: SnackIndexDashboardProps) {
         color: getSnackColor(snack.id)
       }));
       setTrendingSnacks(initialWithColors);
-      console.log(trendingSnacks)
     }
   }, [initialData]);
 
@@ -117,7 +117,7 @@ export function SnackIndexDashboard({ initialData }: SnackIndexDashboardProps) {
     setSelectedSnackDetail(null);
   };
 
-  const filteredSnacks = allSnacks.filter(snack =>
+  const filteredSnacks = trendingSnacks.filter(snack =>
     snack.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     snack.brand.toLowerCase().includes(searchQuery.toLowerCase())
   );
