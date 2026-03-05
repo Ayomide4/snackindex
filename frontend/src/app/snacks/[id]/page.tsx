@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { SnackDetail } from "@/components/SnackDetail";
+import { SnackDetailClient } from "./SnackDetailClient";
 import { api } from "@/lib/api";
 
 // This function runs at build time and revalidates every 24 hours
@@ -22,12 +22,7 @@ export default async function SnackPage({ params }: { params: Promise<{ id: stri
     const { id } = await params;
     const snackDetailData = await api.getSnackDetailData(parseInt(id));
 
-    return (
-      <SnackDetail
-        data={snackDetailData}
-        onBack={() => window.history.back()}
-      />
-    );
+    return <SnackDetailClient data={snackDetailData} />;
   } catch (error) {
     console.error("Failed to fetch snack detail:", error);
     notFound();
