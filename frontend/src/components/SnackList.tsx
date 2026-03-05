@@ -1,6 +1,6 @@
 "use client";
 
-import { TrendingUp, TrendingDown } from "lucide-react";
+import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { TrendingSnack } from "@/types";
 import { formatPercentage } from "@/lib/utils";
 
@@ -69,11 +69,11 @@ export function SnackList({ snacks, onSelect }: SnackListProps) {
             <div className="flex items-center gap-2 min-w-[80px] justify-end">
               {isPositive ? (
                 <TrendingUp className="h-4 w-4 text-green-600" />
-              ) : (
-                <TrendingDown className="h-4 w-4 text-red-500" />
-              )}
+              ) : snack.change < 0 ?
+                <TrendingDown className="h-4 w-4 text-red-500" /> : <Minus className="h-4 w-4 text-gray-500" />
+              }
               <span
-                className={`text-sm font-medium ${isPositive ? "text-green-600" : "text-red-500"
+                className={`text-sm font-medium ${isPositive ? "text-green-600" : snack.change < 0 ? "text-red-500" : "text-gray-500"
                   }`}
               >
                 {formatPercentage(snack.change)}

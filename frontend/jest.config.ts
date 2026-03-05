@@ -14,6 +14,7 @@ const config: Config = {
   moduleNameMapper: {
     // Handle module aliases (if you use them in tsconfig.json)
     '^@/components/(.*)$': '<rootDir>/src/components/$1',
+    '^@/(.*)$': '<rootDir>/src/$1',
   },
 }
 
