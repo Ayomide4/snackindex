@@ -88,7 +88,7 @@ export interface TrendingSnack {
   brand: string;
   score: number;
   change: number;
-  trending: "up" | "down";
+  trending?: "up" | "down";
   color?: string;
 }
 
