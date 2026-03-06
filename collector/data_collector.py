@@ -24,6 +24,43 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 logging.getLogger("praw").setLevel(logging.INFO)
 
+# Keywords that suggest an article is actually about the food/drink product
+SNACK_RELEVANCE_KEYWORDS = {
+    "drink", "beverage", "snack", "food", "flavor", "flavour", "taste",
+    "calorie", "sugar", "caffeine", "ingredient", "nutrition", "recipe",
+    "product", "consumer", "retail", "store", "grocery", "price",
+    "soda", "candy", "chip", "chocolate", "cookie", "energy drink",
+    "limited edition", "new flavor", "recall", "fda", "launch",
+    "snack food", "junk food", "fast food", "vending", "convenience store",
+}
+
+# Keywords that suggest the article is about sponsorships, sports, or other irrelevant topics
+IRRELEVANT_KEYWORDS = {
+    "nascar", "supercross", "motocross", "racing", "race car", "driver of",
+    "ufc", "mma", "fighter", "bout", "esports", "gaming tournament",
+    "sponsor", "sponsorship", "playoff", "quarterback", "touchdown",
+    "midfielder", "halftime", "pit stop", "podium finish", "lap time",
+    "sexton", "reddick", "daytona", "le mans",
+}
+
+
+def is_article_relevant(article_text, search_terms):
+    """Check if a news article is actually about the snack/drink product."""
+    text_lower = article_text.lower()
+
+    relevant_hits = sum(1 for kw in SNACK_RELEVANCE_KEYWORDS if kw in text_lower)
+    irrelevant_hits = sum(1 for kw in IRRELEVANT_KEYWORDS if kw in text_lower)
+
+    # If clearly irrelevant and no food/drink context, filter it out
+    if irrelevant_hits > 0 and relevant_hits == 0:
+        return False
+
+    # If heavily skewed toward irrelevant content, filter it out
+    if irrelevant_hits >= 2 and irrelevant_hits > relevant_hits:
+        return False
+
+    return True
+
 
 def get_environment_variable(key):
     # Gets an environment variable and strips whitespace.
@@ -220,6 +257,11 @@ def get_news_data(search_query, time_filter_iso):
 
             processed_urls.add(url)
             article_text = f"{article['title']} {article['description']}"
+
+            if not is_article_relevant(article_text, search_query):
+                logging.debug(f"Filtered irrelevant article: {article['title']}")
+                continue
+
             sentiment_score = analyzer.polarity_scores(article_text)["compound"]
 
             news_articles.append(

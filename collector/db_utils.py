@@ -113,7 +113,11 @@ def create_snack_config(db_results):
 
         # build news query
         positive_query = f"({config['reddit_query']})"
-        negative_query = "NOT stock NOT shares NOT earnings NOT nasdaq NOT nyse"
+        negative_query = (
+            "NOT stock NOT shares NOT earnings NOT nasdaq NOT nyse "
+            "NOT racing NOT NASCAR NOT supercross NOT motocross "
+            "NOT UFC NOT esports NOT sponsor"
+        )
         config["news_query"] = f"{positive_query} {negative_query}"
 
     return snack_config
